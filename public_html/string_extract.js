@@ -114,20 +114,23 @@ function remove_identificators(html, data, isFirst, new_object){
 $(document).ready(function() {
 
   var html=$("html").html();
-
+var count=0;
   while(html.indexOf('_-start_')>-1){
+    count++;
+    if(count>500)
+      break;
     var start_point=html.indexOf("_-start_")+8;
 
     var end_point=html.indexOf("_-end_");
 
     //extracting the original LANG string and the metadata
     var data=html.substring(start_point, end_point);
-var new_object=new Language_string(data)
-    html=remove_identificators(html, data, true, new_object);
+    var new_object=new Language_string(data)
+   // html=remove_identificators(html, data, true, new_object);
 
     
     add_to_language_array(new_object);
-    html=html.replace(data,new_object.string);
+   // html=html.replace(data,new_object.string);
 
 
     data="_-start_"+data+"_-end_";
@@ -150,7 +153,7 @@ function logData(){
   if(language_strings[i].string.indexOf("_-start_")>0){
     language_strings[i].string=language_strings[i].string.substring(0, language_strings[i].string.indexOf("_-start_"));
   }
-  language_strings[i].string=language_strings[i].string.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi, '');
+  //language_strings[i].string=language_strings[i].string.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi, '');
 }
 }
 
@@ -171,7 +174,7 @@ function createForm(){
     var i=Math.floor(Math.random()*language_strings.length);
 
     var nex_input=template.replace(/COUNT/g, i );
-    nex_input=nex_input.replace(/STRING/g, language_strings[i].string);
+    nex_input=nex_input.replace(/STRING/g, language_strings[i].string.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi, ''));
 
     nex_input=nex_input.replace(/METADATA/g,language_strings[i].metadata);
 
@@ -213,8 +216,12 @@ function remove_highlight(){
 }
 
 function add_autocomplete_to_language_input(){
+  var r_url=window.location.pathname;
+  r_url=r_url.substring(0,r_url.indexOf("public_html"));
+  r_url+='plugins/crowdtranslator/get_languages.php'
+
   var ajaxRequest=$.ajax({
-    url: "../plugins/CrowdTranslator/get_languages.php"
+    url: r_url
   });
 
   ajaxRequest.done( function(response, textStatus, jqKHR) {

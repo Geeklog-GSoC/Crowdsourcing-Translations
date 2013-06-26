@@ -49,13 +49,12 @@ function add_identifier_to_lanugage_file(){
 
 				$needle1="'"; 
 				$needle2="\""; //in a few places language files have " instead of '
-				$needle3="',";
-				$needle4="\",";
+
 
 				$replace1="'_-start_".$meta_data;
 				$replace2="\"_-start_".$meta_data;
-				$replace3="_-end_',";
-				$replace4="_-end_\",";
+				$replace3="_-end_'";
+				$replace4="_-end_\"";
 
 				$end_needle1="'\n";
 				$end_needle2="\"\n";
@@ -67,20 +66,18 @@ function add_identifier_to_lanugage_file(){
 				/*the last array element does not have a ',' to be identified by
 				*so I identify it with the fact that in the closing bracket is in the next line
 				*/
-				if(strpos($file[$line_num+1], ');') !== false){
-					if(strpos($part2, "'")==1)
-						$part2=str_replace_limit($end_needle1, $end_replace1, $part2, $count, 1);
-					else
-						$part2=str_replace_limit($end_needle2, $end_replace2, $part2, $count, 1);	
-				}
 
 				if(strpos($part2, "'")==1)
 					$part2=str_replace_limit($needle1, $replace1, $part2, $count, 1);
 				else
 					$part2=str_replace_limit($needle2, $replace2, $part2, $count, 1);
 
-				$part2=str_replace_limit($needle3, $replace3, $part2, $count, 1);
-				$part2=str_replace_limit($needle4, $replace4, $part2, $count, 1);
+				if(strpos($part2, "_-start_") !== false){
+					if(strpos($part2, "'")==1)
+						$part2=str_lreplace($needle1, $replace3, $part2);
+					else
+						$part2=str_lreplace($needle2, $replace4, $part2);
+				}
 
 
 				$line="";
@@ -96,6 +93,17 @@ function add_identifier_to_lanugage_file(){
 }
 
 
+function str_lreplace($search, $replace, $subject)
+{
+	$pos = strrpos($subject, $search);
+
+	if($pos !== false)
+	{
+		$subject = substr_replace($subject, $replace, $pos, strlen($search));
+	}
+
+	return $subject;
+}
 
 /*
 *the function will upon uninstall of the plugin remove all changes made to the language file
