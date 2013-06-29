@@ -400,4 +400,13 @@ function plugin_getheadercode_crowdtranslator()
     
 }
 
+function test(){
+    global $_CONF;
+//require_once $_CONF['path']."/public_html/lib-common.php";
+    echo $_CONF['path']."/public_html/lib-common.php";
+
+    echo ($_CONF['path_language'] . $_CONF['language'] . '.php');
+}
+
+
 ?>

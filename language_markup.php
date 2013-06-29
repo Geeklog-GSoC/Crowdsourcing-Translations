@@ -6,9 +6,11 @@
 *
 */
 
+
 function add_identifier_to_lanugage_file(){
-	global $_CONF;
-	require_once $_CONF['path']."/public_html/lib-common.php";
+	global $_TABLES, $_CONF;
+	require_once '/../../public_html/lib-common.php';
+	require_once ($_CONF['path_system'] . 'lib-database.php');
 
 	$file=file($_CONF['path_language'] . $_CONF['language'] . '.php');
 
@@ -16,14 +18,15 @@ function add_identifier_to_lanugage_file(){
 	$output="";
 	//keeps track of the current LANG array while looping throught the file lines
 	$current_array="";
-
+	$db_entries=array();
+	$current_object=array();
 	foreach ($file as $line_num => $line) {
 
 
 		$pivot=strpos($line, '=>');
 
 
-		if(strpos($line, "LANG") !== false){
+		if( (strpos($line, "LANG") !== false || strpos($line, "MESSAGE")) && strpos($line, "= array")!==false){
 			$current_array=substr($line, 0, strpos($line, " ="));
 			$current_array=str_replace(" ", "", $current_array);
 			$current_array=str_replace("'", "", $current_array);
@@ -35,20 +38,35 @@ function add_identifier_to_lanugage_file(){
 			$part1=substr($line, 0,$pivot);
 			$part2=substr($line, $pivot+2);
 
-			//check that the value is not an empty string
 			if(strlen($part2)>5){
+				if(strpos($line, "_-start_") == false){
 				//extract the actual key from part1
-				$array_index=substr($part1,1,-1);
-				$array_index=str_replace("'", "", $array_index);
-				$array_index=str_replace(" ", "", $array_index);
+					$array_index=substr($part1,1,-1);
+					$array_index=str_replace("'", "", $array_index);
+					$array_index=str_replace(" ", "", $array_index);
 
 				/*additional data, it is faster to add it here
 				*then to search for it during runtime
 				*/
-				$meta_data="||array=".$current_array."index=".$array_index."||";
+				$meta_data="||array__".str_replace("$", "", $current_array)."index__".$array_index."||";
+
+				//create a object for the array element
+				$current_object['line']=substr( $part2, 1, strlen($part2)-3 );
+				//this will host the html and php tags
+				$current_object['tags']=array();
+				$current_object['line']=remove_tags($current_object['line'], $current_object['tags']);
+				//encode tags for saving to db
+				$current_object['tags']=json_encode($current_object['tags']);
+				$current_object['array']=str_replace("$", "", $current_array);
+				$current_object['index']=$array_index;
+				
+
+				array_push($db_entries, $current_object);
+
 
 				$needle1="'"; 
 				$needle2="\""; //in a few places language files have " instead of '
+
 
 
 				$replace1="'_-start_".$meta_data;
@@ -85,13 +103,77 @@ function add_identifier_to_lanugage_file(){
 				$line=$part1."=>".$part2;
 			}
 		}
-		$output .=$line;
-
 	}
-	//save the new file content
-	file_put_contents($_CONF['path_language'] . $_CONF['language'] . '.php', $output);
+	$output .=$line;
+
 }
 
+	//save the edited arrays to the database
+foreach ($db_entries as $key => $value) {
+	$value['line']=mysql_real_escape_string($value['line']);
+
+	$value['tags']=mysql_real_escape_string($value['tags']);
+
+	DB_query ("INSERT INTO {$_TABLES['CrowdTranslator_original']} (`id`, `language`, `plugin_name`, `language_array`, `array_index`, `string`, `tags`)
+		VALUES ('', '{$_CONF['language']}', 'core', '{$value['array']}', '{$value['index']}' , '{$value['line']}', '{$value['tags']}' ) " );
+}
+
+	//save the new file content
+file_put_contents($_CONF['path_language'] . $_CONF['language'] . '.php', $output);
+}
+
+/**
+* @param string $line the array element from which the tags are removed
+* @param array  &$tags after the tags are removed they are keept here for later assembly
+*/
+function remove_tags($line, &$tags){
+
+	$tags['html']=array();
+	$tags['vars']=array();
+
+	$variables=array("%s", "%t", "%d", "%n", "%i", "%t", "%s", "\$_DB_mysqldump_path", "\$_CONF['backup_path']", "\$_CONF['commentspeedlimit']", "\$_CONF['site_admin_url']", "\$_CONF['site_name']", "\$_CONF['site_url']", "\$_CONF['speedlimit']", "\$_USER['username']", "\$failures", "\$from", "\$fromemail", "\$qid", "\$shortmsg", "\$successes", "\$topic", "\$type");
+
+	foreach ($variables as $key => $value) {
+		while(strpos($line, $value) !== false ){
+
+			array_push($tags['vars'], $value);
+			$line=str_replace($value, "VAR", $line);
+		}
+	}
+
+	remove_standard($line, "<", ">", $tags['html']);
+
+
+	while(strpos($line, "TAG") !== false){
+		$line=str_replace("TAG", "<tag>", $line);
+	}
+
+	while(strpos($line, "VAR") !== false){
+		$line=str_replace("VAR", "<var>", $line);
+	}
+	return $line;
+
+}
+
+/**
+*@param $line string the string from which tags are to be removed
+*@param $key_begin string the begining of the tag
+*@param $key_end string the end of the tag
+*@param $ar
+*/
+
+function remove_standard(&$line, $key_begin, $key_end, &$array){
+	while(strpos($line, $key_begin) !== false && strpos($line, $key_end)!==false){
+
+		$begin=strpos($line, $key_begin);
+		$length=strpos($line, $key_end)+1-$begin;
+
+		$tag=substr($line, $begin, $length);
+		$line=str_replace($tag, "TAG", $line);
+
+		array_push($array, $tag);
+	}
+}
 
 function str_lreplace($search, $replace, $subject)
 {

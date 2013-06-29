@@ -1,8 +1,23 @@
 .translator{
-	font-size: 20px;
+	font-style: italic;
 	font-weight: bolder;
-	background-color: black;
-	color:red;
+	background-color: #1e1e1e;
+	background: rgba(197, 55, 39, 0.79);
+	color:#1e1e1e;
+	border: 1px solid #1e1e1e;
+
+	-moz-border-radius-topleft: 20px;
+	-moz-border-radius-topright:5px;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:20px;
+	-webkit-border-top-left-radius:20px;
+	-webkit-border-top-right-radius:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-webkit-border-bottom-right-radius:20px;
+	border-top-left-radius:20px;
+	border-top-right-radius:5px;
+	border-bottom-left-radius:5px;
+	border-bottom-right-radius:20px;
 }
 
 .hidden{

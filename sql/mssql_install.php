@@ -43,13 +43,26 @@ CREATE TABLE [dbo].[{$_TABLES['CrowdTranslator']}] (
     [language_array] [varchar] (30) NOT NULL,
     [array_key] [varchar] (20) NOT NULL,
     [translation] [varchar] (200) NOT NULL,
-) ON [PRIMARY] 
+    ) ON [PRIMARY] 
+";
+
+$_SQL[]= "
+CREATE TABLE  [dbo].[{$_TABLES['CrowdTranslator_original']}](
+  [id] [int] (11) AUTO_INCREMENT NOT NULL ,
+  [language] [varchar] (30) NOT NULL,
+  [plugin_name] [varchar] (50) NOT NULL,
+  [language_array] [varchar] (30) NOT NULL,
+  [array_index] [varchar(20)] NOT NULL,
+  [string] [varchar(200)] NOT NULL,
+  [tags] [text],
+  PRIMARY KEY ([id][language][plugin_name][language_array][array_index])
+  ) ENGINE=MyISAM  DEFAULT CHARSET=latin1
 ";
 
 $_SQL[] = "ALTER TABLE [dbo].[{$_TABLES['CrowdTranslator']}] ADD
-    CONSTRAINT [PK_{$_TABLES['CrowdTranslator']}] PRIMARY KEY CLUSTERED
-    (
-        [id]
+CONSTRAINT [PK_{$_TABLES['CrowdTranslator']}] PRIMARY KEY CLUSTERED
+(
+    [id]
     )  ON [PRIMARY]
 ";
 ?>

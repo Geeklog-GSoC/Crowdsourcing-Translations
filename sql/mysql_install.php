@@ -30,7 +30,7 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 
-$_SQL['CrowdTranslator'] = "
+$_SQL[] = "
 CREATE TABLE {$_TABLES['CrowdTranslator']} (
   id int  AUTO_INCREMENT NOT NULL,
     language_full_name varchar (30) NOT NULL,
@@ -46,4 +46,18 @@ CREATE TABLE {$_TABLES['CrowdTranslator']} (
   PRIMARY KEY (id)
 ) ENGINE=MyISAM
 ";
+
+$_SQL[] = "
+CREATE TABLE {$_TABLES['CrowdTranslator_original']} (
+  id int AUTO_INCREMENT NOT NULL,
+    language varchar (30) NOT NULL,
+    plugin_name varchar (50) NOT NULL,
+    language_array varchar (30) NOT NULL,
+    array_index varchar (20) NOT NULL,
+    string varchar (200) NOT NULL,
+    tags text,
+  PRIMARY KEY (id,language,plugin_name,language_array,array_index)
+) ENGINE=MyISAM
+";
+
 ?>

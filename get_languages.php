@@ -1,5 +1,10 @@
 <?php
 
+/* the script will return all available languages for translation
+*it will make a list of both languages from the language folder
+and previously user created languages
+*/ 
+
 global $_TABLES, $_CONF;
 
 require_once '/../../public_html/lib-common.php';
