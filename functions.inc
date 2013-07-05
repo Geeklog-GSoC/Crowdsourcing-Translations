@@ -343,11 +343,18 @@ function plugin_getBlocks_crowdtranslator($side, $topic=''){
     if( $_crowdtranslator_CONF['enabled']==true && $side=="left" ){
 
         $display="
-        <form id='translator_form' action='myaction.php' method=post >
+        
+        <div class='translator' id='translator'>
+        <label> <a class='change_selected' href='#' onclick='show_guidelines()'> guidelines </a> </label>
+        <form id='translator_form' method=post >
 
-        <label>Enter Language: </label>
+        <label id='translator_language_label'>Enter Language: </label>
         <input id='translator_language' name='translator_language' placeholder='english' />
+        <input type='submit' id='language_select' />
         </form>
+        <div id='submission_form' >
+        </div>
+        </div>
         ";
 
 
@@ -380,7 +387,7 @@ if($side=="left"){
       'allow_autotags' => false,
       'help'           => '',
       'enable'         => true,
-      'topic_option'   => $_PO_CONF['block_topic_option'],
+      'topic_option'   => $_crowdtranslator_CONF['block_topic_option'],
       'inherit'        => array()
       );
 }

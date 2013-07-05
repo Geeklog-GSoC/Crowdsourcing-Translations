@@ -31,7 +31,7 @@
 // +---------------------------------------------------------------------------+
 
 $_SQL[] = "
-CREATE TABLE {$_TABLES['CrowdTranslator']} (
+CREATE TABLE {$_TABLES['crowdtranslator']} (
   id int  AUTO_INCREMENT NOT NULL,
     language_full_name varchar (30) NOT NULL,
     language_file varchar (30) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE {$_TABLES['CrowdTranslator']} (
 ";
 
 $_SQL[] = "
-CREATE TABLE {$_TABLES['CrowdTranslator_original']} (
+CREATE TABLE {$_TABLES['crowdtranslatororiginal']} (
   id int AUTO_INCREMENT NOT NULL,
     language varchar (30) NOT NULL,
     plugin_name varchar (50) NOT NULL,

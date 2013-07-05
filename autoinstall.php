@@ -71,8 +71,8 @@ function plugin_autoinstall_CrowdTranslator($pi_name)
     );
 
     $tables = array(
-        'CrowdTranslator',
-        'CrowdTranslator_original'
+        'crowdtranslator',
+        'crowdtranslatororiginal'
     );
 
     // Version control and dependencies settings for Geeklog 1.8.0+

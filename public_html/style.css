@@ -1,4 +1,4 @@
-.translator{
+.translator_highlighted{
 	font-style: italic;
 	font-weight: bolder;
 	background-color: #1e1e1e;
@@ -20,6 +20,162 @@
 	border-bottom-right-radius:20px;
 }
 
-.hidden{
+.translator .votes {
+	float: right;
+
+}
+
+
+.translator img {
+	cursor: hand;
+	cursor: pointer;
+}
+
+.translator .votes img {
+	max-height: 20px;
+	
+}
+
+
+.translator .selected {
+	text-decoration: underline;
+	color: #006dcc;
+}
+
+.translator .change_selected {
+	font-size: 9px;
+}
+
+#translator_guidelines {
+	position:absolute;
+	background-color: rgba(30, 30, 30 ,0.6);
+	z-index: 99999999;
+}
+
+#translator_guidelines_inner {
+	position: relative;
+	margin-top: 20px;
+	background: #D1D1D1;
+	opacity: 1;
+	left:5%;
+	width: 90%;
+
+}
+
+#translator_guidelines img {
+	max-height: 20px;
+}
+
+.translator .hidden{
 	display: none;
+}
+
+
+
+.translator .form_image {
+	max-height: 15px;
+	float: right;
+	cursor: hand;
+	cursor: pointer;
+	
+}
+
+
+.translator button,
+.translator input,
+.translator select,
+.translator textarea {
+	margin-bottom: 10px;
+	font-size: 100%;
+	vertical-align: middle;
+	width:100%;
+}
+
+.translator .suggested,
+.translator button,
+.translator input {
+	*overflow: visible;
+	line-height: normal;
+}
+
+.translator .suggested,
+.translator button::-moz-focus-inner,
+.translator input::-moz-focus-inner {
+	padding: 0;
+	border: 0;
+}
+
+.translator .suggested,
+.translator input,
+.translator button,
+.translator select,
+.translator textarea {
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 20px;
+}
+
+.translator .suggested,
+.translator input,
+.translator button,
+.translator select,
+.translator textarea {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.translator .suggested {
+	padding:0 0;
+	background-color: white;
+	border: 2px inset;
+	-webkit-rtl-ordering: logical;
+	-webkit-user-select: text;
+	cursor: auto;
+	color: initial;
+	letter-spacing: normal;
+	word-spacing: normal;
+	text-transform: none;
+	text-indent: 0px;
+	text-shadow: none;
+	text-align: start;
+}
+
+.translator .suggested,
+.translator input {
+	width:100%;
+
+	display: inline-block;
+	min-height: 20px;
+	margin-bottom: 15px;
+	font-size: 14px;
+	line-height: 20px;
+	color: #555555;
+	vertical-align: middle;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	border-color: rgba(82, 168, 236, 0.8);
+	outline: 0;
+	outline: thin dotted \9;
+	/* IE6-9 */
+
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+}
+.translator .group_input .suggested {
+	margin-bottom: 0;
+}
+
+.translator .group_input {
+	margin-bottom: 15px;
+}
+
+.translator .temp_hidden {
+	display: none;
+}
+
+
+.translator .navigation_images {
+	position: relative;
+	left: 35%;
 }

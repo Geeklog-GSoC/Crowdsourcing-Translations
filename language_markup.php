@@ -114,7 +114,7 @@ foreach ($db_entries as $key => $value) {
 
 	$value['tags']=mysql_real_escape_string($value['tags']);
 
-	DB_query ("INSERT INTO {$_TABLES['CrowdTranslator_original']} (`id`, `language`, `plugin_name`, `language_array`, `array_index`, `string`, `tags`)
+	DB_query ("INSERT INTO {$_TABLES['crowdtranslatororiginal']} (`id`, `language`, `plugin_name`, `language_array`, `array_index`, `string`, `tags`)
 		VALUES ('', '{$_CONF['language']}', 'core', '{$value['array']}', '{$value['index']}' , '{$value['line']}', '{$value['tags']}' ) " );
 }
 
