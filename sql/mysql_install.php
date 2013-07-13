@@ -31,7 +31,7 @@
 // +---------------------------------------------------------------------------+
 
 $_SQL[] = "
-CREATE TABLE {$_TABLES['crowdtranslator']} (
+CREATE TABLE {$_TABLES['translations']} (
   id int  AUTO_INCREMENT NOT NULL,
     language_full_name varchar (30) NOT NULL,
     language_file varchar (30) NOT NULL,
@@ -43,12 +43,12 @@ CREATE TABLE {$_TABLES['crowdtranslator']} (
     language_array varchar (30) NOT NULL,
     array_key varchar (20) NOT NULL,
     translation varchar (200) NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id, language_full_name,  language_array, array_key )
 ) ENGINE=MyISAM
 ";
 
 $_SQL[] = "
-CREATE TABLE {$_TABLES['crowdtranslatororiginal']} (
+CREATE TABLE {$_TABLES['originals']} (
   id int AUTO_INCREMENT NOT NULL,
     language varchar (30) NOT NULL,
     plugin_name varchar (50) NOT NULL,
@@ -56,8 +56,18 @@ CREATE TABLE {$_TABLES['crowdtranslatororiginal']} (
     array_index varchar (20) NOT NULL,
     string varchar (200) NOT NULL,
     tags text,
-  PRIMARY KEY (id,language,plugin_name,language_array,array_index)
+  PRIMARY KEY (id, language, plugin_name, language_array, array_index)
 ) ENGINE=MyISAM
 ";
+
+$_SQL[] = "
+CREATE TABLE {$_TABLES['votes']} (
+ translation_id int  NOT NULL,
+ user_id int NOT NULL,
+ sign int NOT NULL,
+  PRIMARY KEY (translation_id, user_id)
+) ENGINE=MyISAM
+";
+
 
 ?>
