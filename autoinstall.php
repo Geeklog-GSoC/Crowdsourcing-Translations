@@ -2,7 +2,7 @@
 
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | CrowdTranslator Plugin 0.1                                                |
+// | crowdtranslator Plugin 0.1                                                |
 // +---------------------------------------------------------------------------+
 // | autoinstall.php                                                           |
 // |                                                                           |
@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 
 /**
-* @package CrowdTranslator
+* @package crowdtranslator
 */
 
 /**
@@ -42,9 +42,9 @@
 * @return   array               Plugin information
 *
 */
-function plugin_autoinstall_CrowdTranslator($pi_name)
+function plugin_autoinstall_crowdtranslator($pi_name)
 {
-    $pi_name         = 'CrowdTranslator';
+    $pi_name         = 'crowdtranslator';
     $pi_display_name = 'CrowdTranslator';
     $pi_admin        = $pi_display_name . ' Admin';
 
@@ -71,9 +71,13 @@ function plugin_autoinstall_CrowdTranslator($pi_name)
     );
 
     $tables = array(
-        'crowdtranslator',
-        'crowdtranslatororiginal'
+        'translations',
+        'originals',
+        'votes',
+        'gems', 
+        'awarded_gems'
     );
+
 
     // Version control and dependencies settings for Geeklog 1.8.0+
     // http://wiki.geeklog.net/index.php/Plugin_Autoinstall#Plugin_dependencies_and_version_control
@@ -97,7 +101,7 @@ function plugin_autoinstall_CrowdTranslator($pi_name)
 * Create the initial configuration for the plugin
 */
 
-function plugin_load_configuration_CrowdTranslator($pi_name)
+function plugin_load_configuration_crowdtranslator($pi_name)
 {
     global $_CONF;
 
@@ -106,7 +110,7 @@ function plugin_load_configuration_CrowdTranslator($pi_name)
     require_once $_CONF['path_system'] . 'classes/config.class.php';
     require_once $base_path . 'install_defaults.php';
 
-    return plugin_initconfig_CrowdTranslator();
+    return plugin_initconfig_crowdtranslator();
 }
 
 /**
@@ -117,7 +121,7 @@ function plugin_load_configuration_CrowdTranslator($pi_name)
 *
 */
 
-function plugin_compatible_with_this_version_CrowdTranslator($pi_name)
+function plugin_compatible_with_this_version_crowdtranslator($pi_name)
 {
     return true;
 }

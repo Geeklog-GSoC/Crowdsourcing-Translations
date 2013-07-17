@@ -55,6 +55,7 @@
     position:absolute;
     background:#333;
     z-index: 99999999;
+    min-height: 459px;
 }
 
 #translator_guidelines_inner {
@@ -83,7 +84,7 @@
     float: right;
     cursor: hand;
     cursor: pointer;
-
+    
 }
 
 
@@ -162,7 +163,6 @@
     border-radius: 4px;
     border-color: rgba(82, 168, 236, 0.8);
     outline: 0;
-    outline: thin dotted \9;
     /* IE6-9 */
 
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
@@ -210,7 +210,7 @@
 }
 
 .translator .error {
-    background-color:rgba(255, 25, 5, 0.4);
+    background-color:rgba(255, 25, 5, 0.4)  !important;;
     color: #1e1e1e;
 }
 
@@ -233,9 +233,10 @@
     width: 100%;
     text-align: center;
     font-size: 11px;
+    float: left;
 }
 
-.translator .progress_bar #translated {
+.translator .progress_bar .translated {
     height: 15px;
     overflow: visible;
     width:0%;
@@ -254,7 +255,7 @@
     box-shadow: 0px 0px 12px 0px rgba(126, 234, 25, 1),inset 0px 1px 0px 0px rgba(255, 255, 255, 0.45),inset 1px 0px 0px 0px rgba(255, 255, 255, 0.25),inset -1px 0px 0px 0px rgba(255, 255, 255, 0.25);
 }
 
-.translator .progress_bar #not_translated {
+.translator .progress_bar .not_translated {
     height: 15px;
     background-color: red;
     height: 15px;
@@ -271,3 +272,93 @@
     -webkit-box-shadow: 0px 0px 12px 0px rgba(232, 25, 87, 1),inset 0px 1px 0px 0px rgba(255, 255, 255, 0.45),inset 1px 0px 0px 0px rgba(255, 255, 255, 0.25),inset -1px 0px 0px 0px rgba(255, 255, 255, 0.25);
     box-shadow: 0px 0px 12px 0px rgba(232, 25, 87, 1),inset 0px 1px 0px 0px rgba(255, 255, 255, 0.45),inset 1px 0px 0px 0px rgba(255, 255, 255, 0.25),inset -1px 0px 0px 0px rgba(255, 255, 255, 0.25);
 }
+
+.index  button{
+    width: auto;
+}
+
+.index .translations_view  {
+    margin: 10px 10px 0 10px;
+    padding: 10px;
+    min-width: 90%;
+}
+
+.index .translations_view th {
+    margin-bottom: 3px;
+    padding: 5px;
+    border-bottom: 1px solid;
+    border-color: rgba(82, 168, 236, 0.8);
+    outline: 0;
+    /* IE6-9 */
+}
+
+.index .translations_view td {
+    text-align: center;
+}
+
+.index .translations_view table .error{
+    background-color:rgba(255, 25, 5, 0.4);
+}
+
+.index .translations_view tr:nth-child(even) {
+    background: rgba(192, 212, 228, 0.6);
+}
+
+.index .index_language_graph{
+    margin-top: 35px;
+}
+
+.index div.achievement {
+    display: inline-block;
+    width: 140px;
+    max-width: 190px;
+    height: 170px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+
+    border: 1px solid #f3f3e9;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    -webkit-box-shadow: 0px 0px 12px 0px rgba(126, 234, 25, 1),inset 0px 1px 0px 0px rgba(255, 255, 255, 0.45),inset 1px 0px 0px 0px rgba(255, 255, 255, 0.25),inset -1px 0px 0px 0px rgba(255, 255, 255, 0.25);
+    box-shadow: 0px 0px 12px 0px rgba(126, 234, 25, 1),inset 0px 1px 0px 0px rgba(255, 255, 255, 0.45),inset 1px 0px 0px 0px rgba(255, 255, 255, 0.25),inset -1px 0px 0px 0px rgba(255, 255, 255, 0.25);
+}
+
+.index .achievement img {
+    height: 130px;
+    width: 130px;
+    padding: 0;
+    margin: 0;
+    margin-left:5px;
+}
+
+.index .badge {
+    display: inline-block;
+    position: relative;
+    
+    height: 120px;
+    margin: 0 5px 4px 0;
+
+}
+
+.index .badge p {
+    text-align: center;
+}
+
+.index .achievement_name {
+    width:100%;
+    line-height: 1.2em;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.index td{
+    padding: 3px;
+}
+
+.index .translator .top_users_submisions{
+    float:right;
+    width: 100px;
+}
+

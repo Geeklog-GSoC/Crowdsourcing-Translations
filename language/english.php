@@ -50,7 +50,7 @@ global $LANG32;
 // +---------------------------------------------------------------------------+
 
 $LANG_crowdtranslator_1 = array(
-    'plugin_name' => 'crowdtranslator',
+    'plugin_name' => 'Crowd Translator',
     'hello' => 'Hello, world!' // this is an example only - feel free to remove
 );
 

@@ -69,5 +69,23 @@ CREATE TABLE {$_TABLES['votes']} (
 ) ENGINE=MyISAM
 ";
 
+$_SQL[] = "
+CREATE TABLE {$_TABLES['gems']} (
+ gem_id int  NOT NULL,
+ title text NOT NULL,
+ tooltip text NOT NULL,
+ image varchar (50) NOT NULL,
+  PRIMARY KEY (gem_id)
+) ENGINE=MyISAM
+";
+
+$_SQL[] = "
+CREATE TABLE {$_TABLES['awarded_gems']} (
+ gem_id int  NOT NULL,
+ user_id int NOT NULL,
+  PRIMARY KEY (gem_id, user_id)
+) ENGINE=MyISAM
+";
+
 
 ?>
