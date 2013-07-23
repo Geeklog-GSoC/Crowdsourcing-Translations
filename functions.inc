@@ -44,6 +44,7 @@ if (strpos(strtolower($_SERVER['PHP_SELF']), 'functions.inc') !== false) {
  * Language file include
  */
 $plugin_path = $_CONF['path'] . 'plugins/crowdtranslator/';
+
 $langfile = $plugin_path . 'language/' . $_CONF['language'] . '.php';
 
 if (file_exists($langfile)) {
@@ -320,15 +321,19 @@ function plugin_upgrade_crowdtranslator()
 */
 function plugin_autouninstall_crowdtranslator()
 {
-    require_once $plugin_path."/language_markup.php";
+    global $_CONF;
+    $plugin_path = $_CONF['path'] . 'plugins/crowdtranslator/';
+
+    require_once $plugin_path . "language_markup.php";
     remove_identifier_to_lanugage_file();
+   
     $out = array (
         /* give the name of the tables, without $_TABLES[] */
         'tables' => array('translations', 'originals', 'votes', 'gems', 'awarded_gems', 'blocked_users'),
         /* give the full name of the group, as in the db */
-        'groups' => array('crowdtranslator Admin'),
+        'groups' => array('Crowd Translator Admin'),
         /* give the full name of the feature, as in the db */
-        'features' => array('crowdtranslator.admin'),
+        'features' => array('Crowd Translator.admin'),
         /* give the full name of the block, including 'phpblock_', etc */
         'php_blocks' => array(),
         /* give all vars with their name */

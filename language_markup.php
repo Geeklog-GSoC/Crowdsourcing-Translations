@@ -10,8 +10,8 @@
 function add_identifier_to_lanugage_file()
 {
     global $_TABLES, $_CONF;
-    require_once '/../../public_html/lib-common.php';
-    require_once ($_CONF['path_system'] . 'lib-database.php');
+    require_once $_CONF['path_html'] . '/lib-common.php';
+    require_once $_CONF['path_system'] . 'lib-database.php';
 
     $file=file($_CONF['path_language'] . $_CONF['language'] . '.php');
 
@@ -111,9 +111,9 @@ function add_identifier_to_lanugage_file()
 
     //save the edited arrays to the database
 foreach ($db_entries as $key => $value) {
-    $value['line']=mysql_real_escape_string($value['line']);
+    $value['line']=DB_escapeString($value['line']);
 
-    $value['tags']=mysql_real_escape_string($value['tags']);
+    $value['tags']=DB_escapeString($value['tags']);
 
     DB_query ("INSERT INTO {$_TABLES['originals']} (`id`, `language`, `plugin_name`, `language_array`, `array_index`, `string`, `tags`)
         VALUES ('', '{$_CONF['language']}', 'core', '{$value['array']}', '{$value['index']}' , '{$value['line']}', '{$value['tags']}' ) " );
@@ -197,7 +197,7 @@ function str_lreplace($search, $replace, $subject)
 function remove_identifier_to_lanugage_file()
 {
     global $_CONF;
-    require_once $_CONF['path']."/public_html/lib-common.php";
+    require_once $_CONF['path_html'] . 'lib-common.php';
 
     $file=file($_CONF['path_language'] . $_CONF['language'] . '.php');
     $output="";
