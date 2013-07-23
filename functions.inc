@@ -55,11 +55,11 @@ if (file_exists($langfile)) {
 /**
 * Check and see if we need to load the plugin configuration
 */ 
-if (!isset($_crowdtranslator_CONF)) {
+if (!isset($_CROWDTRANSLATOR_CONF)) {
     require_once $_CONF['path_system'] . 'classes/config.class.php';
     
-    $crowdtranslator_config = config::get_instance();
-    $_crowdtranslator_CONF = $crowdtranslator_config->get_config('crowdtranslator');
+    $CROWDTRANSLATOR_config = config::get_instance();
+    $_CROWDTRANSLATOR_CONF = $CROWDTRANSLATOR_config->get_config('crowdtranslator');
 }
 /**
  * crowdtranslator plugin table(s)
@@ -69,6 +69,7 @@ $_TABLES['originals'] = $_DB_table_prefix . 'originals';
 $_TABLES['votes'] = $_DB_table_prefix . 'votes';
 $_TABLES['gems'] = $_DB_table_prefix . 'gems';
 $_TABLES['awarded_gems'] = $_DB_table_prefix . 'awarded_gems';
+$_TABLES['blocked_users'] = $_DB_table_prefix . 'blocked_users';
 
 
 // +---------------------------------------------------------------------------+
@@ -86,10 +87,10 @@ $_TABLES['awarded_gems'] = $_DB_table_prefix . 'awarded_gems';
 */
 function plugin_getmenuitems_crowdtranslator()
 {
-    global $_CONF, $LANG_crowdtranslator_1;
+    global $_CONF, $LANG_CROWDTRANSLATOR_1;
 
     $url = $_CONF['site_url'] . '/crowdtranslator/index.php';
-    $menuitems[$LANG_crowdtranslator_1['plugin_name']] = $url;
+    $menuitems[$LANG_CROWDTRANSLATOR_1['plugin_name']] = $url;
 
     return $menuitems;
 }
@@ -104,9 +105,9 @@ function plugin_getmenuitems_crowdtranslator()
 /*
 function plugin_searchtypes_crowdtranslator()
 {
-    global $LANG_crowdtranslator_1;
+    global $LANG_CROWDTRANSLATOR_1;
 
-    $tmp['crowdtranslator'] = $LANG_crowdtranslator_1['plugin_name'];
+    $tmp['crowdtranslator'] = $LANG_CROWDTRANSLATOR_1['plugin_name'];
 
     return $tmp;
 }
@@ -131,7 +132,7 @@ function plugin_searchtypes_crowdtranslator()
 /*
 function plugin_dopluginsearch_crowdtranslator($query, $datestart, $dateend, $topic, $type, $author, $keyType, $page, $perpage)
 {
-    global $_TABLES, $LANG_crowdtranslator_1;
+    global $_TABLES, $LANG_CROWDTRANSLATOR_1;
 
     // Make sure the query is SQL safe
     $query = trim(addslashes($query));
@@ -158,7 +159,7 @@ function plugin_dopluginsearch_crowdtranslator($query, $datestart, $dateend, $to
         $sql .= "AND (owner_id = '$author') ";
     }
 
-    $search = new SearchCriteria('crowdtranslator', $LANG_crowdtranslator_1['plugin_name']);
+    $search = new SearchCriteria('crowdtranslator', $LANG_CROWDTRANSLATOR_1['plugin_name']);
     $columns = array('title', 'description');
     list($sql,$ftsql) = $search->buildSearchSQL($keyType, $query, $columns, $sql);
     $search->setSQL($sql);
@@ -181,7 +182,7 @@ function plugin_dopluginsearch_crowdtranslator($query, $datestart, $dateend, $to
 /*
 function plugin_autotags_crowdtranslator($op, $content = '', $autotag = '')
 {
-    global $_CONF, $_TABLES, $LANG_crowdtranslator_1;
+    global $_CONF, $_TABLES, $LANG_CROWDTRANSLATOR_1;
 
     if ($op == 'tagname') {
         return 'crowdtranslator';
@@ -211,11 +212,11 @@ function plugin_autotags_crowdtranslator($op, $content = '', $autotag = '')
 */
 function plugin_cclabel_crowdtranslator()
 {
-    global $_CONF, $LANG_crowdtranslator_1;
+    global $_CONF, $LANG_CROWDTRANSLATOR_1;
 
     $retval = array();
     if (SEC_hasRights('crowdtranslator.admin')) {
-        $retval = array($LANG_crowdtranslator_1['plugin_name'],
+        $retval = array($LANG_CROWDTRANSLATOR_1['plugin_name'],
             $_CONF['site_admin_url'] . '/plugins/crowdtranslator/index.php',
             plugin_geticon_crowdtranslator());
     }
@@ -230,10 +231,10 @@ function plugin_cclabel_crowdtranslator()
 */
 function plugin_getadminoption_crowdtranslator()
 {
-    global $_CONF, $LANG_crowdtranslator_1;
+    global $_CONF, $LANG_CROWDTRANSLATOR_1;
 
     if (SEC_hasRights('crowdtranslator.admin')) {
-        return array($LANG_crowdtranslator_1['plugin_name'],
+        return array($LANG_CROWDTRANSLATOR_1['plugin_name'],
             $_CONF['site_admin_url'] . '/plugins/crowdtranslator/index.php', 0);
     }
 }
@@ -323,7 +324,7 @@ function plugin_autouninstall_crowdtranslator()
     remove_identifier_to_lanugage_file();
     $out = array (
         /* give the name of the tables, without $_TABLES[] */
-        'tables' => array('translations', 'originals', 'votes', 'gems', 'awarded_gems'),
+        'tables' => array('translations', 'originals', 'votes', 'gems', 'awarded_gems', 'blocked_users'),
         /* give the full name of the group, as in the db */
         'groups' => array('crowdtranslator Admin'),
         /* give the full name of the feature, as in the db */
@@ -340,30 +341,42 @@ function plugin_autouninstall_crowdtranslator()
 
 function plugin_getBlocks_crowdtranslator($side, $topic=''){
 
-    global $_crowdtranslator_DEFAULT,$_crowdtranslator_CONF;
+    global $_CROWDTRANSLATOR_DEFAULT,$_CROWDTRANSLATOR_CONF, $_USER, $_TABLES;
 
     $retval=array();
 
-    if( $_crowdtranslator_CONF['enabled']==true && $side=="left" && !COM_isAnonUser() ){
+    
 
-        $display="
-        
-        <div class='translator' id='translator'>
-        
-        </br>
-        <span id='change_language'></span>
-        <form id='translator_form' method=post >
+    if( $_CROWDTRANSLATOR_CONF['enabled']==true && $side=="left" && !COM_isAnonUser() ){
+
+        $query="SELECT `user_id` FROM {$_TABLES['blocked_users']} WHERE `user_id`= {$_USER['uid']}";
+        $result=DB_query($query);
+        if(DB_numRows($result)==0){
+            $display="
+
+            <div class='translator' id='translator'>
+
+            </br>
+            <span id='change_language'></span>
+            <form id='translator_form' method=post >
             <label id='translator_language_label'>Enter Language: </label>
             <input id='translator_language' name='translator_language' placeholder='English' />
             <input type='submit' id='language_select' />
-        </form>
+            </form>
 
-        <div class='progress_bar'> <div class='translated' id='translated'> </div> <div class='not_translated' id='not_translated'> </div> </div>
+            <div class='progress_bar'> <div class='translated' id='translated'> </div> <div class='not_translated' id='not_translated'> </div> </div>
 
-        <div id='submission_form' >
-        </div>
-        </div>
-        ";
+            <div id='submission_form' >
+            </div>
+            </div>
+            ";
+        } else {
+            $display = "
+                <div class='translator' id='translator'>
+                <span class='error'> You have been blocked by the site admin and can not submit translations </span>
+                </div>
+            ";
+        }
 
 
         $retval[] = array('name'           => 'crowdtranslator',
@@ -386,19 +399,19 @@ function plugin_getBlocksConfig_crowdtranslator($side, $topic='')
     
     
 
-if($side=="left"){    
-    $retval[] = array('plugin'         => 'crowdtranslator',
-      'name'           => 'Translator',
-      'title'          => 'Translator',
-      'type'           => 'dynamic',
-      'onleft'         => true,
-      'allow_autotags' => false,
-      'help'           => '',
-      'enable'         => true,
-      'topic_option'   => $_crowdtranslator_CONF['block_topic_option'],
-      'inherit'        => array()
-      );
-}
+    if($side=="left"){    
+        $retval[] = array('plugin'         => 'crowdtranslator',
+          'name'           => 'Translator',
+          'title'          => 'Translator',
+          'type'           => 'dynamic',
+          'onleft'         => true,
+          'allow_autotags' => false,
+          'help'           => '',
+          'enable'         => true,
+          'topic_option'   => $_CROWDTRANSLATOR_CONF['block_topic_option'],
+          'inherit'        => array()
+          );
+    }
     
     return $retval;
 }

@@ -84,7 +84,7 @@
     float: right;
     cursor: hand;
     cursor: pointer;
-    
+
 }
 
 
@@ -229,7 +229,7 @@
 }
 
 .translator .progress_bar {
-    margin: 10px 0 20px 0;
+    margin: 10px 0 0px 0;
     width: 100%;
     text-align: center;
     font-size: 11px;
@@ -280,12 +280,12 @@
 .index .translations_view  {
     margin: 10px 10px 0 10px;
     padding: 10px;
-    min-width: 90%;
+
 }
 
 .index .translations_view th {
     margin-bottom: 3px;
-    padding: 5px;
+
     border-bottom: 1px solid;
     border-color: rgba(82, 168, 236, 0.8);
     outline: 0;
@@ -294,6 +294,7 @@
 
 .index .translations_view td {
     text-align: center;
+    width: 10%;
 }
 
 .index .translations_view table .error{
@@ -335,7 +336,7 @@
 .index .badge {
     display: inline-block;
     position: relative;
-    
+
     height: 120px;
     margin: 0 5px 4px 0;
 
@@ -362,3 +363,10 @@
     width: 100px;
 }
 
+.translator .small {
+    width: 15%;
+}
+
+.translator input.small {
+    margin :0;
+}

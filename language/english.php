@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 
 /**
-* @package crowdtranslator
+* @package CrowdTranslator
 */
 
 /**
@@ -49,13 +49,13 @@ global $LANG32;
 // |               YY    - phrase id or number                                 |
 // +---------------------------------------------------------------------------+
 
-$LANG_crowdtranslator_1 = array(
+$LANG_CROWDTRANSLATOR_1 = array(
     'plugin_name' => 'Crowd Translator',
     'hello' => 'Hello, world!' // this is an example only - feel free to remove
 );
 
 // Messages for the plugin upgrade
-$PLG_crowdtranslator_MESSAGE3002 = $LANG32[9]; // "requires a newer version of Geeklog"
+$PLG_CROWDTRANSLATOR_MESSAGE3002 = $LANG32[9]; // "requires a newer version of Geeklog"
 
 // Localization of the Admin Configuration UI
 $LANG_configsections['crowdtranslator'] = array(

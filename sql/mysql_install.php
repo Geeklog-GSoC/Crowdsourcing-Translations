@@ -87,5 +87,13 @@ CREATE TABLE {$_TABLES['awarded_gems']} (
 ) ENGINE=MyISAM
 ";
 
+$_SQL[] = "
+CREATE TABLE {$_TABLES['blocked_users']} (
+ user_id int  NOT NULL,
+ timestamp datetime NOT NULL,
+  PRIMARY KEY (user_id)
+) ENGINE=MyISAM
+";
+
 
 ?>
