@@ -5,13 +5,14 @@
  * @param int first_shown marks the first shown element of the translation submision form
  * @param int last_shown marks the last shown element of the translation submision form
  */
-var language_strings = new Array();
-var taged_strings;
-var first_shown = 0;
-var last_shown = 6;
+ var language_strings = new Array();
+ var taged_strings;
+ var first_shown = 0;
+ var last_shown = 6;
+ var script_name='string_extract';
 
-$(document).ready(function()
-{
+ $(document).ready(function()
+ {
     //will extract markup from the strings
     re_render_html();
     additional_purge();
@@ -56,8 +57,8 @@ $(document).ready(function()
  * removes all identifiers the plugin made for strings
  * returns the clean html to the browser
  */
-function re_render_html()
-{
+ function re_render_html()
+ {
     var html = $("html").html();
 
     while (html.indexOf('_-start_') > -1) {
@@ -83,8 +84,8 @@ function re_render_html()
 /* Creates a object from the data passed by the LANG arrays
  *@param data string the extracted data from the rendered page
  */
-function Language_string(data)
-{
+ function Language_string(data)
+ {
     this.array_name = extract_array_name(data);
     this.array_index = extract_array_index(data);
     this.string = extract_string(data);
@@ -154,8 +155,8 @@ function add_to_language_array(element)
  *@return returns the purged html
  */
 
-function remove_identificators(html, data, isFirst, new_object)
-{
+ function remove_identificators(html, data, isFirst, new_object)
+ {
     //need the offset to make sure that the new <span> is not added to html tags such as <title>
     var offset = 50;
     if (html.indexOf(data) < 50) {
@@ -195,8 +196,8 @@ function remove_identificators(html, data, isFirst, new_object)
  *In case there has been a oversee in removing identificators
  * this function will take care of them
  */
-function additional_purge()
-{
+ function additional_purge()
+ {
     for (var i = 0; i < language_strings.length; i++) {
         if (language_strings[i].string.indexOf("_-start_") > 0) {
             language_strings[i].string = language_strings[i].string.substring(0, language_strings[i].string.indexOf("_-start_"));
@@ -208,8 +209,8 @@ function additional_purge()
  * Gets list of available languages for translation via AJAX call
  * and uses jQueryUI to create autocomplete option for the language selection input
  */
-function add_autocomplete_to_language_input()
-{
+ function add_autocomplete_to_language_input()
+ {
     var r_url = get_base_url();
     r_url += "/get_languages.php";
 
@@ -241,19 +242,19 @@ function add_autocomplete_to_language_input()
  #############################################################################*/
 
 /*if a language for translation if picked by the user
- * the form is hidden */
+* the form is hidden */
 function hide_language_input()
 {
     $('#change_language').prepend("<label id='selected_language'>"
-            + " Selected language: <a class='change_selected' href='javascript:void(0)' onclick='show_language_input()'> (change) </a> " + "<span class='selected'>" + getCookie('language') + "</span> </label> ");
+        + " Selected language: <a class='change_selected' href='javascript:void(0)' onclick='show_language_input()'> (change) </a> " + "<span class='selected'>" + getCookie('language') + "</span> </label> ");
     $('#translator_form').addClass('hidden');
 }
 
 /* if the user wants to change the picked language
  * this function will show the translation form again and reset navigation variables
  */
-function show_language_input()
-{
+ function show_language_input()
+ {
     $('#translator_form').val('');
     $('#translator_form').removeClass('hidden');
     $('#submission_form').html('');
@@ -266,8 +267,8 @@ function show_language_input()
 /* Sends a AJAX request to get formated LANG strings
  * and the acctual translation form
  */
-function get_original_language_values()
-{
+ function get_original_language_values()
+ {
     var r_url = get_base_url();
     r_url += "get_original_language_values.php";
     var json_ob = JSON.stringify(language_strings);
@@ -301,7 +302,7 @@ function get_original_language_values()
 }
 
 /*Will show a graphical representation of the amount of translated
- * strings to the current language */
+* strings to the current language */
 function show_progress_bar(translated)
 {
     translated = parseFloat(translated).toFixed(2);
@@ -321,8 +322,8 @@ function show_progress_bar(translated)
  * after the response is sent faulty inputs, if any will be marked as such
  * the user is notified about successfully saved inputs, those input boxes will be removed
  */
-function translator_form_submit()
-{
+ function translator_form_submit()
+ {
     var r_url = get_base_url();
     r_url += "submit_translation.php";
 
@@ -355,8 +356,8 @@ function translator_form_submit()
 /*Adds a css class to faulty inputs so they are easiy recognisible, Gives a previev of those at the begining of the form
  * * @param array bad_inputs array of numbers marking the input id of the faulty inputs
  */
-function mark_bad_inputs(bad_inputs)
-{
+ function mark_bad_inputs(bad_inputs)
+ {
     var error_message = "<ul> You forgot the &lttag&gt/&ltvar&gt in following translations:";
     for (var i = 0; i < bad_inputs.length; i++) {
         $('#translator_form_submission #input_span_' + bad_inputs[i]).addClass('bad_input');
@@ -370,8 +371,8 @@ function mark_bad_inputs(bad_inputs)
 /** removes successfully submited inputs
  * @param array good_inputs array of numbers marking the input id of the successfully saved inputs
  */
-function remove_submited(good_inputs)
-{
+ function remove_submited(good_inputs)
+ {
     for (var i = 0; i < good_inputs.length; i++) {
         $('#translator_form_submission #input_span_' + good_inputs[i]).remove();
     }
@@ -388,8 +389,8 @@ function remove_submited(good_inputs)
  * @param string id the id of the language_string associated with the string which is voted
  * @param object object the object which made the call
  */
-function vote(sign, id, object)
-{
+ function vote(sign, id, object)
+ {
     r_url = get_base_url();
     r_url += "vote.php";
 
@@ -425,8 +426,8 @@ function vote(sign, id, object)
 /*Will show the next 6 (or less) input fields of the translation form
  If neccessary disables the arrow for showing next translations
  */
-function show_next()
-{
+ function show_next()
+ {
     var count = 0;
 
     $('#input_span_' + last_shown).nextAll('span[id^=input_span_]').slice(0, 6).each(function()
@@ -451,7 +452,7 @@ function show_next()
 /*Will show the previous 6 (or less) input fields of the translation form
  If neccessary disables the arrow for showing previous translations
  */
-function show_previous() {
+ function show_previous() {
     var count = 0;
 
     $('#input_span_' + first_shown).nextAll('span[id^=input_span_]').slice(0, 6).each(function()
@@ -478,8 +479,8 @@ function show_previous() {
 /**
  * adds CSS class to highligh selected string(s) on page
  */
-function highlight()
-{
+ function highlight()
+ {
     var id = event.target.id;
     id = id.replace('_image', '');
     var value = $('#' + id + "_hidden").val();
@@ -492,8 +493,8 @@ function highlight()
 /**
  * removes CSS class of highlighted string(s) on page
  */
-function remove_highlight()
-{
+ function remove_highlight()
+ {
     var id = event.target.id;
     id = id.replace('_image', '');
     var value = $('#' + id + "_hidden").val();
@@ -512,21 +513,30 @@ function remove_highlight()
  #############################################################################*/
 
 
-/* Creates the base url for AJAX calls and resource retreival (e.g. images) */
-function get_base_url()
-{
-    var r_url = window.location.pathname;
-    r_url = r_url.substring(0, r_url.indexOf("public_html") + 11); //r_url.substring(0, r_url.indexOf("public_html")); 
-    r_url += "/crowdtranslator/"; //"plugins/crowdtranslator/"; 
+ /* Creates the base url for AJAX calls and resource retreival (e.g. images) */
+ function get_base_url()
+ {   
+     var scripts = document.getElementsByTagName('script'),
+     len = scripts.length,
+     re = script_name+'.js',
+     src, r_url;
 
-    return r_url;
+     while (len--) {
+      src = scripts[len].src;
+      if (src && src.match(re)) {
+        r_url = src;
+        break;
+    }
+}
+r_url = r_url.substring(0, r_url.indexOf(script_name));  
+return r_url;
 }
 
 /*Gets the script saved cookie
  http://www.w3schools.com/js/js_cookies.asp
  */
-function getCookie(c_name)
-{
+ function getCookie(c_name)
+ {
     var c_value = document.cookie;
     var c_start = c_value.indexOf(" " + c_name + "=");
     if (c_start == -1)
@@ -595,8 +605,8 @@ function hide_guidelines()
  * Shows content of hidden divs
  * @param string id the id of the function calles
  */
-function show(id)
-{
+ function show(id)
+ {
     var element = $('#' + id + '_content');
     if (element.hasClass('hidden')) {
         element.removeClass('hidden');
@@ -614,8 +624,8 @@ function show(id)
  * @param int admin indicading if admin mode or user mode
  * @param string order_by indicating the ordering of the table
  */
-function show_more_translations(limit, start, admin, order_by)
-{
+ function show_more_translations(limit, start, admin, order_by)
+ {
 
     var limit_input = $('#limit').val();
 
@@ -657,8 +667,8 @@ function show_more_translations(limit, start, admin, order_by)
  * @param int id The translation id
  * @param string translation the translation text
  */
-function delete_translation(id, translation)
-{
+ function delete_translation(id, translation)
+ {
 
     r_url = get_base_url();
     r_url += "lib-translator.php";
@@ -689,8 +699,8 @@ function delete_translation(id, translation)
  * Issues AJAX call to display all available badges
  * @param int admin Indicating if showing all badges awarded to a user or all badges awailable
  */
-function get_all_badges(admin)
-{
+ function get_all_badges(admin)
+ {
 
     var link_value = $('#badges_show').html();
     if (link_value == '(show all)') {
@@ -731,24 +741,24 @@ function get_all_badges(admin)
  * Changing the number of translations shown per page
  * @see show_more_translations
  */
-function translation_table_change_limit()
-{
+ function translation_table_change_limit()
+ {
     var limit = $('#limit').val();
     var script = $('#show_next').attr("onclick");
     script = script.substring(script.indexOf('('));
-    var params = script.split(',');
-    console.log(params);
-    var admin = parseInt(params[2]);
-    var order_by = params[3];
-    order_by = order_by.replace(')', '');
-    show_more_translations(limit, -1, admin, order_by);
-}
+        var params = script.split(',');
+        console.log(params);
+        var admin = parseInt(params[2]);
+        var order_by = params[3];
+        order_by = order_by.replace(')', '');
+        show_more_translations(limit, -1, admin, order_by);
+    }
 
 /**
  * Issuing AJAX call to put a user on the block list
  */
-function block_user(user_id)
-{
+ function block_user(user_id)
+ {
     r_url = get_base_url();
     r_url += "lib-translator.php";
 
@@ -777,8 +787,8 @@ function block_user(user_id)
 /**
  * Issuing AJAX call to remove a user from the block list
  */
-function remove_block(user_id)
-{
+ function remove_block(user_id)
+ {
     r_url = get_base_url();
     r_url += "lib-translator.php";
 
