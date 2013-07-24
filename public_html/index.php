@@ -48,13 +48,13 @@ $display = '';
 
 
 // MAIN
-$display .= COM_siteHeader('menu', $LANG_crowdtranslator_1['plugin_name']);
-$display .= COM_startBlock("<h4><a href='http://wiki.geeklog.net/index.php?title=Crowdsourcing_Translations'>".$LANG_crowdtranslator_1['plugin_name']."</a></h4>");
+$display .= COM_siteHeader('menu', $LANG_CROWDTRANSLATOR_1['plugin_name']);
+$display .= COM_startBlock("<h4><a href='http://wiki.geeklog.net/index.php?title=Crowdsourcing_Translations'>".$LANG_CROWDTRANSLATOR_1['plugin_name']."</a></h4>");
 
 $display .= "<div class='index'>";
 
 if ( COM_isAnonUser() ){
-    $display .= get_info_text($LANG_crowdtranslator_1['plugin_name']);
+    $display .= get_info_text($LANG_CROWDTRANSLATOR_1['plugin_name']);
 
     $display .= "<h4> To start translating you have to Login </h4>";
 
@@ -82,13 +82,13 @@ function get_info_text($plugin_name)
 function logedin_user_display()
 {
 
-    global $LANG_crowdtranslator_1, $_USER;
+    global $LANG_CROWDTRANSLATOR_1, $_USER;
 
     $display = "<div class='translator'>";
 
     //plugin info
     $display .=  COM_startBlock("Plugin info  <a  id='info' href='javascript:void(0)' onclick='show(this.id)'> (show)  </a>");
-    $display .=  "<div id='info_content' class='hidden'>" . get_info_text($LANG_crowdtranslator_1['plugin_name']) . "</div>";
+    $display .=  "<div id='info_content' class='hidden'>" . get_info_text($LANG_CROWDTRANSLATOR_1['plugin_name']) . "</div>";
     $display .= COM_endBlock();
 
     //stats
