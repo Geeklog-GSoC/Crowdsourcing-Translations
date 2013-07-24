@@ -2,6 +2,7 @@
 
 /* when using AJAX the function is specified, this is wherre it is retrieved
  */
+$function = '';
 if (isset($_REQUEST['function']) && !empty($_REQUEST['function']))
 {
 	$function = $_REQUEST['function'];
@@ -159,8 +160,9 @@ function get_user_badges($limit = -1, $admin = 0)
 
 	$display = '';
 
-	if ($admin == 0)
+	if (($admin == 0) && isset($_REQUEST['admin'])) {
 		$admin = $_REQUEST['admin'];
+    }
 
 	if (isset($admin) && !empty($admin) && $admin == 1)
 	{
@@ -552,6 +554,9 @@ function get_translations_table($limit = 5, $start = -1, $order_by = '`posted`, 
 function get_user_translations_table($limit = 5, $start = -1, $order_by = '`posted`, `id` DESC')
 {
 	global $_USER;
+
+    $display = '';
+
 	get_translations_options($limit, $start, $order_by);
 
 	$query = get_translations_table_query("`user_id`={$_USER['uid']}", $start, $order_by, $limit);
