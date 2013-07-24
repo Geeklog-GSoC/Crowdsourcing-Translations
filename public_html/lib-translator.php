@@ -501,6 +501,8 @@ function get_translations_table($limit = 5, $start = -1, $order_by = '`posted`, 
 {
 	global $_TABLES, $_USER;
 
+    $display = '';
+
 	get_translations_options($limit, $start, $order_by);
 
 	$query = get_translations_table_query(1, $start, $order_by, $limit);
@@ -625,6 +627,8 @@ function block_user($user_id = null)
 function get_blocked_users_table()
 {
 	global $_TABLES;
+
+    $display = '';
 
 	$query = "SELECT b.*, u.username FROM {$_TABLES['blocked_users']} as b JOIN {$_TABLES['users']} AS u ON b.user_id = u.uid";
 	$result = DB_query($query);
