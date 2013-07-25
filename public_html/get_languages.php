@@ -5,7 +5,7 @@
 and previously user created languages
 */ 
 
-require_once '/../../public_html/lib-common.php';
+require_once '../lib-common.php';
 require_once ($_CONF['path_system'] . 'lib-database.php');
 
 

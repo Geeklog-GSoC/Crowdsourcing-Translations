@@ -275,7 +275,7 @@ function hide_language_input()
 
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: {objects: json_ob, language: getCookie('language')},
+        data: {objects: json_ob, language: getCookie('selected_language')},
         type: "POST"
     });
 
