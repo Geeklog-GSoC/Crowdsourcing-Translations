@@ -8,6 +8,7 @@ if (isset($_REQUEST['function']) && !empty($_REQUEST['function']))
 	$function = $_REQUEST['function'];
 }
 
+
 /* If the function is set we include the lib-common
   othervise lib-common should be included by the lib user page
  */
@@ -27,23 +28,17 @@ if (isset($_REQUEST['function']) && !empty($_REQUEST['function']))
 /* If the lib is used by AJAX this is where its decided
   which function will be called
  */
-  if ($function == 'get_user_translations_table')
-  {
+  if ($function == 'get_user_translations_table') {
   	echo get_user_translations_table();
-  } elseif ($function == 'get_translations_table')
-  {
+  } elseif ($function == 'get_translations_table') {
   	echo get_translations_table();
-  } elseif ($function == 'delete_translation')
-  {
+  } elseif ($function == 'delete_translation') {
   	echo delete_translation();
-  } elseif ($function == 'get_user_badges')
-  {
+  } elseif ($function == 'get_user_badges') {
   	echo get_user_badges();
-  } else if ($function == 'block_user')
-  {
+  } else if ($function == 'block_user') {
   	echo block_user();
-  } else if ($function == 'remove_block')
-  {
+  } else if ($function == 'remove_block') {
   	echo remove_block();
   }
 
@@ -184,17 +179,22 @@ function get_user_badges($limit = -1, $admin = 0)
 	}
 
 	if ($limit > 0)
-		$query = "SELECT g.title, g.tooltip, g.image FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']} LIMIT {$limit}";
+		$query = "SELECT g.title, g.tooltip, g.image, a.award_lvl FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']} LIMIT {$limit}";
 	else
-		$query = "SELECT g.title, g.tooltip, g.image FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']}";
+		$query = "SELECT g.title, g.tooltip, g.image, a.award_lvl FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']}";
 
 	$result = DB_query($query);
 	$count = 0;
 	if (DB_numRows($result) > 0)
 	{
 		while ($row = DB_fetchArray($result))
-		{
-			$display .= display_badge($row, $count);
+		{	
+			if($row['award_lvl'] > 0)
+				$award_lvl = "level {$row['award_lvl']}";
+			else
+				$award_lvl = '';
+
+			$display .= display_badge($row, $count, $award_lvl);
 		}
 	} else {
 		$display = "You don't have any badges... :( Start translating!";
@@ -207,15 +207,15 @@ function get_user_badges($limit = -1, $admin = 0)
  * @param object gem The badge data retrieved from database
  * @param int count Keeps count on number of displayed gems, gems will be displayed 4 in a row
  */
-function display_badge($gem, $count)
+function display_badge($gem, $count, $lvl='')
 {
 
 	global $_CONF;
 
 	$base_url = $_CONF['site_url'] . "/crowdtranslator/images/badges/";
-	$display = "<div class='achievement' title='{$gem['tooltip']}' >"
+	$display = "<div class='achievement' title='{$gem['tooltip']} {$lvl}' >"
 	. "<div class='badge' > <img src='{$base_url}{$gem['image']}' /></div>"
-	. "<p class='achievement_name'>{$gem['title']}</p></div>";
+	. "<p class='achievement_name'>{$gem['title']}</br>{$lvl}</p></div>";
 	if (++$count % 4 == 0)
 		$display .= "</br>";
 
@@ -674,5 +674,6 @@ function remove_block($user_id = null)
 		DB_query($query);
 	}
 }
+
 
 ?>
