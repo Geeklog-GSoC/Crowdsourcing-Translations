@@ -335,13 +335,17 @@ function show_progress_bar(translated)
 
     ajaxRequest.done(function(response, textStatus, jqXHR)
     {
+        console.log(response);
         var response_object = JSON.parse(response);
         var bad_inputs = response_object['bad_input'];
         var good_inputs = response_object['good_input'];
         var translated = response_object['translated'];
-
+        var awards = response_object['awards_number']
+        console.log(awards);
         mark_bad_inputs(bad_inputs);
         remove_submited(good_inputs);
+        if( awards > 0)
+        add_notification(awards);
 
 
     });
@@ -379,6 +383,17 @@ function show_progress_bar(translated)
     if (good_inputs.length > 0)
         $('#submision_success').html("Successfully submited: " + good_inputs.length + " translation(s)!</br> Thank You!");
 
+}
+
+/**
+* Adds notification to side view if awards have been given
+* @param int award number of awards given
+*/
+function add_notification(awards){
+    $('.notification_badge').html(awards);
+    var tooltip_content = "You have " + awards + " new badge(s)!!! Check them out!";
+    $('.notification_badge').parent().attr('title', tooltip_content);
+    $('.notification_badge').parent().attr('title', tooltip_content);
 }
 
 

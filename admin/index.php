@@ -37,7 +37,7 @@
 
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
-require_once $_CONF['path'].'/public_html/crowdtranslator/lib-translator.php';
+require_once '../../../crowdtranslator/lib-translator.php';
 
 
 

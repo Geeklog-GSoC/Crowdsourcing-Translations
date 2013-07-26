@@ -70,9 +70,7 @@ $response['translated']=$translated;
 $response['good_input']=$good_input;
 //will save translations
 save_to_database($process_q);
-//remove
-$response['process_q']=$process_q;
-
+$response['awards_number'] = (int)(awards());
 echo json_encode($response);
 
 /**
@@ -105,24 +103,147 @@ function save_to_database($process_q)
     foreach ($process_q as $key => $input) {
         $query="
         INSERT INTO {$_TABLES['translations']}(`id`, `language_full_name`, `language_file`, `plugin_name`, `site_credentials`, `user_id`,
-        `timestamp`, `approval_counts`, `language_array`, `array_key`, `translation`)
-        VALUES ('', '{$input->language_full_name}' , 
-        '{$input->language_file}', '{$input->plugin_name}', '{$input->site_credentials}', '{$input->user_id}', '{$date}', '{$input->approval_counts}',
-        '{$input->language_array}','{$input->array_key}','{$input->translation}')";
+            `timestamp`, `approval_counts`, `language_array`, `array_key`, `translation`)
+VALUES ('', '{$input->language_full_name}' , 
+    '{$input->language_file}', '{$input->plugin_name}', '{$input->site_credentials}', '{$input->user_id}', '{$date}', '{$input->approval_counts}',
+    '{$input->language_array}','{$input->array_key}','{$input->translation}')";
 
-        $result=DB_query($query);
+$result=DB_query($query);
 
         //after the translation is saved the first vote is added to it (assuming the user who submited the vote would vote it up)
-        if($result==true){
-            $query="SELECT MAX(`id`) as translation_id FROM {$_TABLES['translations']} ";
-            $result=DB_query($query);
+if($result==true){
+    $query="SELECT MAX(`id`) as translation_id FROM {$_TABLES['translations']} ";
+    $result=DB_query($query);
 
-            $translation_id=DB_fetchArray($result)['translation_id'];
-            $query="INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$input->user_id}', '1') ";
-            DB_query($query);
-        }   
+    $translation_id=DB_fetchArray($result)['translation_id'];
+    $query="INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$input->user_id}', '1') ";
+    DB_query($query);
+}   
+}
+}
+
+/**
+* Checks for the awards the user has not recieved and if criteria is met assignes them
+* for repetative awards the check is always done
+* @return int number of awards given
+*/
+function awards()
+{
+    global $_USER, $_TABLES;
+
+    $counter=0;
+
+    $query = "SELECT g.gem_id FROM `gl_gems` g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM `gl_awarded_gems` a WHERE a.user_id='2')";
+    $possible_gems = DB_query($query);
+
+    $query =  "SELECT COUNT(`id`) as count FROM {$_TABLES['translations']} WHERE `user_id` = {$_USER['uid']}";
+    $result = DB_query($query);
+    $translation_count = DB_fetchArray($result)['count'];
+
+    if($translation_count < 0)
+        return ;
+
+    $gems = array();
+    while($gem = DB_fetchArray($possible_gems) )
+        array_push($gems, $gem['gem_id']);
+
+    if(in_array(2, $gems) == false){
+       array_push($gems, 2);
+   }
+
+   foreach ($gems as $index => $gem_id) {
+    if( $gem_id == 2){
+
+        while (award_nth_translation($translation_count, $gem_id)  == true){
+            $counter++;
+        }
+        continue;
+    }
+    if( check_if_awarded($gem_id) == false ){
+        give_award($gem_id);
+        $counter++;
     }
 }
+
+return $counter;
+}
+
+/**
+* @param int translation_count number of translation the user has submited
+* @param int gem_id the id under which the award has been given
+* @return boolean true if award is given, false otherwise
+*/
+function  award_nth_translation($translation_count, $gem_id)
+{   
+
+    //minimal translations here is 5
+    if( $translation_count < 5)
+        return false;
+
+    global $_TABLES, $_USER;
+
+    $query = "SELECT `award_lvl` FROM {$_TABLES['awarded_gems']} WHERE `user_id` = {$_USER['uid']} AND `gem_id` = {$gem_id}";
+    $result = DB_query($query);
+    if( $row = DB_fetchArray($result) )
+        $award_lvl = $row['award_lvl'] + 1;
+    else
+        $award_lvl = 2;
+
+    $award_mark = ( 3 * ($award_lvl*$award_lvl) - $award_lvl )/2;
+
+    if ( $translation_count >= $award_mark ){
+        give_award($gem_id, $award_lvl);
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+/**
+* Check if award with id gem_id is given to user
+* @param int gem_id the id under which the award has been given
+* @return boolean true if user has award
+*/
+function check_if_awarded($gem_id)
+{
+
+    global $_USER, $_TABLES;
+
+    $query = "SELECT COUNT(`gem_id`) AS count FROM {$_TABLES['awarded_gems']} WHERE `gem_id` = 1 AND `user_id` = {$_USER['uid']}";
+    $result = DB_query($query);
+
+    $count = DB_fetchArray($result)['count'];
+
+    if($count > 0)
+        return true;
+
+    return false;
+}
+
+/**
+* The award is given to the user by saving it to the awarded_gems table
+* @param int gem_id the id under which the award has been given
+* @param int award_lvl the level of the award
+*/
+function give_award($gem_id=null, $award_lvl=0)
+{   
+
+    if($gem_id == null)
+        return;
+
+    global $_USER, $_TABLES;
+
+    if($award_lvl == 0)
+        $query = "INSERT INTO {$_TABLES['awarded_gems']} (`gem_id`, `user_id`, `award_lvl`) VALUES ({$gem_id}, {$_USER['uid']}, {$award_lvl})";
+    else
+        $query = "UPDATE {$_TABLES['awarded_gems']} SET `award_lvl` = {$award_lvl} WHERE `gem_id` = {$gem_id}";
+    
+    DB_query($query);
+}
+
+
+
 
 
 ?>
