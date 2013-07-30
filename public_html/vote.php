@@ -7,15 +7,20 @@
 
 require_once '../lib-common.php';
 require_once $_CONF['path_system'] . 'lib-database.php';
+require_once "./lib-translator.php";
 
 $user_id=$_USER['uid'];
 $response['refresh']=false;
 
+if( (check_post_variable("translation_id", $error) == false) 
+    || (check_post_variable("sign", $error) == false) )
+   exit;
+
 //user has to be logged in to vote
 if( !empty($user_id) && isset($user_id) ){
 
-    $translation_id=$_REQUEST['translation_id'];
-    $sign=$_REQUEST['sign'];
+    $translation_id=$_POST['translation_id'];
+    $sign=$_POST['sign'];
 
     $result=DB_query("SELECT `sign` FROM {$_TABLES['votes']} WHERE `translation_id`='{$translation_id}' AND `user_id`='{$user_id}' ");
     $previous_sign=0;
