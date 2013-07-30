@@ -4,6 +4,11 @@ require_once '../lib-common.php';
 require_once ($_CONF['path_system'] . 'lib-database.php');
 require_once "./lib-translator.php";
 
+if( (check_post_variable("taged_strings", $error) == false) 
+    || (check_post_variable("count", $error) == false) )
+   exit;
+
+
 $response=array();
 
 
@@ -40,6 +45,8 @@ for($i=0; $i<$count; $i++){
         //if the input passed the previous test a new object is created with all relevant data for the translation
         if($faulty==false){
             $input=new stdClass();  
+            if ( check_post_variable($metadata_name, $error) == false )
+                exit;
             extract_metadata($_POST[$metadata_name], $input->language_array, $input->array_key);
             $input->language_full_name=$language;
             $input->language_file=preg_replace('/[^a-z]/i','_', strtolower($language) );
@@ -51,9 +58,9 @@ for($i=0; $i<$count; $i++){
 
             //just to get on the safe side
             if (!get_magic_quotes_gpc()){
-                $input->language_full_name=addslashes($input->language_full_name);
-                $input->site_credentials=addslashes($input->site_credentials);
-                $input->translation=addslashes($input->translation);
+                $input->language_full_name=DB_escapeString($input->language_full_name);
+                $input->site_credentials=DB_escapeString($input->site_credentials);
+                $input->translation=DB_escapeString($input->translation);
             }
 
             //this will be used by the script to remove input fields

@@ -160,7 +160,7 @@ function get_user_badges($limit = -1, $admin = 0, $show_not_awarded = true)
 
 	$display = '';
 
-	if (($admin == 0) && isset($_REQUEST['admin'])) {
+	if (($admin == 0) && isset($_REQUEST['admin']) && !empty($_REQUEST['admin'])) {
 		$admin = $_REQUEST['admin'];
 	}
 
@@ -700,5 +700,13 @@ function remove_block($user_id = null)
 	}
 }
 
-
+function check_post_variable($post_var, &$error){
+    if(!isset($_POST[$post_var]) || empty($_POST[$post_var])){
+        $error->message="Objects no set";
+        $error->error_code='1';
+        echo json_encode($error);
+        return false;
+    }
+    return true;
+}
 ?>

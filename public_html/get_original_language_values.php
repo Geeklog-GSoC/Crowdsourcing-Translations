@@ -12,8 +12,11 @@ require_once ($_CONF['path_system'] . 'lib-database.php');
 require_once "./lib-translator.php";
 
 
-$language=$_POST['language'];
+if( (check_post_variable("language", $error) == false) 
+    || (check_post_variable("objects", $error) == false) )
+   exit;
 
+$language=$_POST['language'];
 $myArray = json_decode(stripslashes($_POST['objects']));
 
 $response=array();
