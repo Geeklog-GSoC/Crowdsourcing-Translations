@@ -346,7 +346,7 @@ function plugin_autouninstall_crowdtranslator()
 
 function plugin_getBlocks_crowdtranslator($side, $topic=''){
 
-    global $_CROWDTRANSLATOR_DEFAULT,$_CROWDTRANSLATOR_CONF, $_USER, $_TABLES;
+    global $_CROWDTRANSLATOR_DEFAULT,$_CROWDTRANSLATOR_CONF, $_USER, $_TABLES, $_CONF;
 
     $retval=array();
 
@@ -387,7 +387,8 @@ function plugin_getBlocks_crowdtranslator($side, $topic=''){
         $retval[] = array('name'           => 'crowdtranslator',
           'type'           => 'dynamic',
           'onleft'         => true,
-          'title'         => "Translator (<a style='font-size:9px' href='javascript:void(0)' onclick='show_guidelines()'>guidelines</a>)",
+          'title'         => "Translator (<a style='font-size:9px' href='javascript:void(0)' onclick='show_guidelines()'>guidelines</a>)
+           <a href='{$_CONF['site_url']}/crowdtranslator'><span class='badge-success notification_badge'></span></a>",
           'content'        => $display,
           'allow_autotags' => false,
           'help'           => '');
@@ -428,9 +429,23 @@ function plugin_getheadercode_crowdtranslator()
     $_SCRIPTS->setCSSFile('helper', '/crowdtranslator/style.css');
     $_SCRIPTS->setJavaScriptLibrary('jquery.ui.autocomplete');
     $_SCRIPTS->setJavaScriptLibrary('jquery.ui.menu');
+    $_SCRIPTS->setJavaScriptLibrary('jquery.ui.tooltip');
     $_SCRIPTS->setJavaScriptLibrary('jquery');
+}
+
+function plugin_profileblocksdisplay_crowdtranslator($user_id)
+{   
+    global $_CONF;
+    require_once $_CONF['path_html'] . '/crowdtranslator/lib-translator.php';
+
+    $display = COM_startBlock("Available badges <a  id='badges_show' href='javascript:void(0)' onclick='get_all_badges(0)'>(show all)</a>");
     
-    
+    $display .= "<div class='index'>";
+    $display .= get_user_badges(4, 0, false);
+    $display .= "</div>";
+    $display .= COM_endBlock();
+
+    return $display;
 }
 
 
