@@ -104,6 +104,7 @@ $display .= COM_endBlock();
 
 $display .= COM_siteFooter();
 
+
 echo $display;
 
 ?>

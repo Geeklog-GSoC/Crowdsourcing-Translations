@@ -81,7 +81,8 @@ function get_total_approval_for_user()
 
 	$query = "SELECT SUM(`approval_counts`) as sum FROM {$_TABLES['translations']} WHERE `user_id` = {$_USER['uid']}";
 	$result = DB_query($query);
-	$sum = DB_fetchArray($result)['sum'];
+	$sum = DB_fetchArray($result);
+	$sum = $sum['sum'];
 	return $sum > 0 ? $sum : "0";
 }
 
@@ -107,7 +108,8 @@ function get_user_translated_languages($user_id = null)
 
 		$query = "SELECT COUNT(`id`) as count FROM {$_TABLES['translations']} WHERE `user_id` = {$user_id} AND `language_full_name`='{$row['language']}'";
 		$result2 = DB_query($query);
-		$count = DB_fetchArray($result2)['count'];
+		$count = DB_fetchArray($result2);
+		$count = $count['count'];
 
 		$display .= "<div class='index_language_graph'> <h3> {$row['language']} </h3>
 		<div class='progress_bar'> <span class='translated' style='width: {$translated}%'> {$translated}% </span> "
@@ -134,11 +136,14 @@ function get_translation_percent($language = null)
 	}
 
 	$result = DB_query("SELECT COUNT(`id`) as count FROM {$_TABLES['originals']} ");
-	$number_of_original_elements = DB_fetchArray($result)['count'];
+	$number_of_original_elements = DB_fetchArray($result);
+	$number_of_original_elements = $number_of_original_elements['count'];
 
 	$result = DB_query("SELECT COUNT(DISTINCT `language_array`,`array_key`) as count FROM {$_TABLES['translations']} WHERE `language_full_name`='{$language}'");
 
-	$number_of_translated_elements = DB_fetchArray($result)['count'];
+	$number_of_translated_elements = DB_fetchArray($result);
+	$number_of_translated_elements = $number_of_translated_elements['count'];
+
 	$translated = ($number_of_translated_elements / $number_of_original_elements) * 100;
 
 	return (float) $translated;
@@ -149,7 +154,7 @@ function get_translation_percent($language = null)
  * @param int limit The number of badges to be displayed
  * @param int admin Weather to use user or admin mode 
  */
-function get_user_badges($limit = -1, $admin = 0)
+function get_user_badges($limit = -1, $admin = 0, $show_not_awarded = true)
 {
 	global $_USER, $_TABLES;
 
@@ -157,7 +162,7 @@ function get_user_badges($limit = -1, $admin = 0)
 
 	if (($admin == 0) && isset($_REQUEST['admin'])) {
 		$admin = $_REQUEST['admin'];
-    }
+	}
 
 	if (isset($admin) && !empty($admin) && $admin == 1)
 	{
@@ -178,11 +183,13 @@ function get_user_badges($limit = -1, $admin = 0)
 		return $display;
 	}
 
-	if ($limit > 0)
+	if ($limit > 0){
 		$query = "SELECT g.title, g.tooltip, g.image, a.award_lvl FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']} LIMIT {$limit}";
-	else
+	} else {
 		$query = "SELECT g.title, g.tooltip, g.image, a.award_lvl FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']}";
+	}
 
+	$limit -= DB_numRows($result);
 	$result = DB_query($query);
 	$count = 0;
 	if (DB_numRows($result) > 0)
@@ -196,8 +203,17 @@ function get_user_badges($limit = -1, $admin = 0)
 
 			$display .= display_badge($row, $count, $award_lvl);
 		}
-	} else {
-		$display = "You don't have any badges... :( Start translating!";
+	} 
+	if( $show_not_awarded == true ){
+		if ($limit > 0){
+			$query = "SELECT g.title, g.tooltip, g.image FROM {$_TABLES['gems']} g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM {$_TABLES['awarded_gems']} a WHERE a.user_id= {$_USER['uid']} ) LIMIT {$limit}";
+		} elseif ($limit<0) {
+			$query = "SELECT g.title, g.tooltip, g.image FROM {$_TABLES['gems']} g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM {$_TABLES['awarded_gems']} a WHERE a.user_id= {$_USER['uid']} )";
+		}
+		$result = DB_query($query);
+		while ($row = DB_fetchArray($result)){
+			$display .= display_badge($row, $count, $award_lvl, 'disabled_badge');
+		}
 	}
 	return $display;
 }
@@ -207,13 +223,13 @@ function get_user_badges($limit = -1, $admin = 0)
  * @param object gem The badge data retrieved from database
  * @param int count Keeps count on number of displayed gems, gems will be displayed 4 in a row
  */
-function display_badge($gem, $count, $lvl='')
+function display_badge($gem, $count, $lvl='', $disabled='')
 {
 
 	global $_CONF;
 
 	$base_url = $_CONF['site_url'] . "/crowdtranslator/images/badges/";
-	$display = "<div class='achievement' title='{$gem['tooltip']} {$lvl}' >"
+	$display = "<div class='achievement {$disabled}' title='{$gem['tooltip']} {$lvl}' >"
 	. "<div class='badge' > <img src='{$base_url}{$gem['image']}' /></div>"
 	. "<p class='achievement_name'>{$gem['title']}</br>{$lvl}</p></div>";
 	if (++$count % 4 == 0)
@@ -233,8 +249,9 @@ function get_user_votes()
 
 	$query = "SELECT COUNT(`user_id`) as count FROM {$_TABLES['votes']} WHERE `user_id` = {$_USER['uid']}";
 	$result = DB_query($query);
+	$result = DB_fetchArray($result);
 
-	return DB_fetchArray($result)['count'];
+	return $result['count'];
 }
 
 /**
@@ -252,8 +269,9 @@ function get_translated_count($admin)
 	else
 		$query = "SELECT COUNT(`id`) as count FROM {$_TABLES['translations']} WHERE `user_id`= {$_USER['uid']}";
 	$result = DB_query($query);
+	$result = DB_fetchArray($result);
 
-	return DB_fetchArray($result)['count'];
+	return $result['count'];
 }
 
 /**
@@ -263,9 +281,11 @@ function get_votes_count()
 {
 	global $_TABLES;
 	$query = "SELECT COUNT(`user_id`) as count FROM {$_TABLES['votes']} WHERE 1";
+	
 	$result = DB_query($query);
+	$result = DB_fetchArray($result);
 
-	return DB_fetchArray($result)['count'];
+	return $result['count'];
 }
 
 /**
@@ -283,7 +303,8 @@ function get_most_upvotes($criterion)
 	$query = "SELECT MAX(`approval_counts`) as max FROM {$_TABLES['translations']} WHERE {$criterion}";
 	$result = DB_query($query);
 
-	$result = DB_fetchArray($result)['max'];
+	$result = DB_fetchArray($result);
+	$result = $result['max'];
 
 	if (!$result)
 		$result = 0;
@@ -301,8 +322,9 @@ function get_users_translating()
 
 	$query = "SELECT COUNT( DISTINCT (`user_id`) ) as count FROM {$_TABLES['translations']} WHERE 1";
 	$result = DB_query($query);
+	$result = DB_fetchArray($result);
 
-	return DB_fetchArray($result)['count'];
+	return $result['count'];
 }
 
 /**
@@ -315,8 +337,9 @@ function get_languages_translated_count()
 
 	$query = "SELECT  COUNT( DISTINCT `language_full_name`) as count FROM {$_TABLES['translations']} WHERE 1";
 	$result = DB_query($query);
+	$result = DB_fetchArray($result);
 
-	return DB_fetchArray($result)['count'];
+	return $result['count'];
 }
 
 /**
@@ -329,8 +352,9 @@ function get_translations_with_negative_vote_count()
 
 	$query = "SELECT  COUNT( `id`) as count FROM {$_TABLES['translations']} WHERE `approval_counts`<0 ";
 	$result = DB_query($query);
+    $result = DB_fetchArray($result);
 
-	return DB_fetchArray($result)['count'];
+	return $result['count'];
 }
 
 /**
@@ -355,7 +379,8 @@ function get_translated_languages()
 
 		$query = "SELECT COUNT(`id`) as count FROM {$_TABLES['translations']} WHERE `language_full_name`='{$row['language']}'";
 		$result2 = DB_query($query);
-		$count = DB_fetchArray($result2)['count'];
+		$count = DB_fetchArray($result2);
+		$count = $count['count'];
 
 		$display .= "<div class='index_language_graph'> <h3> {$row['language']} </h3>
 		<div class='progress_bar'> <span class='translated' style='width: {$translated}%'> {$translated}% </span> "
@@ -501,7 +526,7 @@ function get_translations_table($limit = 5, $start = -1, $order_by = '`posted`, 
 {
 	global $_TABLES, $_USER;
 
-    $display = '';
+	$display = '';
 
 	get_translations_options($limit, $start, $order_by);
 
@@ -557,7 +582,7 @@ function get_user_translations_table($limit = 5, $start = -1, $order_by = '`post
 {
 	global $_USER;
 
-    $display = '';
+	$display = '';
 
 	get_translations_options($limit, $start, $order_by);
 
@@ -628,7 +653,7 @@ function get_blocked_users_table()
 {
 	global $_TABLES;
 
-    $display = '';
+	$display = '';
 
 	$query = "SELECT b.*, u.username FROM {$_TABLES['blocked_users']} as b JOIN {$_TABLES['users']} AS u ON b.user_id = u.uid";
 	$result = DB_query($query);

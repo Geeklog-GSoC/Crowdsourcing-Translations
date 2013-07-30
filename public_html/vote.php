@@ -6,7 +6,7 @@
 */
 
 require_once '../lib-common.php';
-require_once ($_CONF['path_system'] . 'lib-database.php');
+require_once $_CONF['path_system'] . 'lib-database.php';
 
 $user_id=$_USER['uid'];
 $response['refresh']=false;
@@ -26,7 +26,8 @@ if( !empty($user_id) && isset($user_id) ){
     if(DB_numRows($result)==0){
         $result= DB_query("INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$user_id}', '{$sign}') ");
     } else {
-        $previous_sign=DB_fetchArray ($result)['sign'];
+        $previous_sign = DB_fetchArray ($result);
+        $previous_sign = $previous_sign['sign'];
         $result= DB_query("UPDATE {$_TABLES['votes']} SET `sign`='{$sign}'   WHERE `translation_id`='{$translation_id}' AND `user_id`='{$user_id}' ");
     }
 
@@ -37,7 +38,8 @@ if( !empty($user_id) && isset($user_id) ){
     $query=("SELECT `approval_counts` FROM {$_TABLES['translations']} WHERE `id`='{$translation_id}' ");
     $result=DB_query($query);
 
-    $approval_counts=DB_fetchArray($result)['approval_counts'];
+    $approval_counts=DB_fetchArray($result);
+    $approval_counts = $approval_counts['approval_counts'];
     
     if($approval_counts<=-5){
         $response['refresh']=true;

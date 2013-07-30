@@ -9,11 +9,12 @@
 
 require_once '../lib-common.php';
 require_once ($_CONF['path_system'] . 'lib-database.php');
-require_once "./get_translation_percent.php";
+require_once "./lib-translator.php";
 
 
-$language=$_REQUEST['language'];
-$myArray = json_decode($_REQUEST['objects']);
+$language=$_POST['language'];
+
+$myArray = json_decode(stripslashes($_POST['objects']));
 
 $response=array();
 $language_array=array();
@@ -24,11 +25,11 @@ foreach ($myArray as $key => $value) {
 }
 
 $user_id=$_USER['uid'];
-$base_url=$_CONF['site_url'] . "/CrowdTranslator/images/";
+$base_url=$_CONF['site_url'] . "/crowdtranslator/images/";
 $up_image=$base_url."up.png";
 $down_image=$base_url."down.png";
 
-$form="<form id='translator_form_submission' method='post' action='{$_CONF['site_url']}/CrowdTranslator/submit_translation.php' >"
+$form="<form id='translator_form_submission' method='post' action='{$_CONF['site_url']}/crowdtranslator/submit_translation.php' >"
 ."<div id='submision_success' class='success'></div>" 
 ."<div id='submision_error' class='error'></div>"
 ."<span><img id='up_img' src='{$up_image}' onclick='show_previous()' class='hidden navigation_images' /></span></br>";
@@ -99,7 +100,7 @@ $form .= "<span><img id='down_img' src='{$down_image}' onclick='show_next()' cla
 $response['language_array']=$language_array;
 $response['form']=$form;
 $response['taged_strings']=$taged_strings;
-$response['translated']=$translated;
+$response['translated']=get_translation_percent();
 
 echo json_encode($response);
 

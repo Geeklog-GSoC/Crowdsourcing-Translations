@@ -2,16 +2,17 @@
 
 require_once '../lib-common.php';
 require_once ($_CONF['path_system'] . 'lib-database.php');
-require_once "./get_translation_percent.php";
+require_once "./lib-translator.php";
 
 $response=array();
 
 
-$taged_strings=json_decode($_POST['taged_strings']);
+$taged_strings=json_decode(stripslashes($_POST['taged_strings']));
 $bad_input=array();
 $good_input=array();
 $process_q=array();
 $count=$_POST['count'];
+$language = $_COOKIE['selected_language'];
 
 
 //loop through all the input fields
@@ -66,7 +67,7 @@ for($i=0; $i<$count; $i++){
 }
 
 $response['bad_input']=$bad_input;
-$response['translated']=$translated;
+$response['translated']=get_translation_percent();
 $response['good_input']=$good_input;
 //will save translations
 save_to_database($process_q);
@@ -115,7 +116,8 @@ if($result==true){
     $query="SELECT MAX(`id`) as translation_id FROM {$_TABLES['translations']} ";
     $result=DB_query($query);
 
-    $translation_id=DB_fetchArray($result)['translation_id'];
+    $translation_id=DB_fetchArray($result);
+    $translation_id= $translation_id['translation_id'];
     $query="INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$input->user_id}', '1') ";
     DB_query($query);
 }   
@@ -133,12 +135,13 @@ function awards()
 
     $counter=0;
 
-    $query = "SELECT g.gem_id FROM `gl_gems` g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM `gl_awarded_gems` a WHERE a.user_id='2')";
+    $query = "SELECT g.gem_id FROM {$_TABLES['gems']} g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM {$_TABLES['awarded_gems']} a WHERE a.user_id={$_USER['uid']})";
     $possible_gems = DB_query($query);
 
     $query =  "SELECT COUNT(`id`) as count FROM {$_TABLES['translations']} WHERE `user_id` = {$_USER['uid']}";
     $result = DB_query($query);
-    $translation_count = DB_fetchArray($result)['count'];
+    $translation_count = DB_fetchArray($result);
+    $translation_count = $translation_count['count'];
 
     if($translation_count < 0)
         return ;
@@ -150,19 +153,30 @@ function awards()
     if(in_array(2, $gems) == false){
        array_push($gems, 2);
    }
-
+   if(in_array(4, $gems) == false){
+       array_push($gems, 4);
+   }
    foreach ($gems as $index => $gem_id) {
-    if( $gem_id == 2){
-
+     $awarded= check_if_awarded($gem_id);
+    //nth_translation
+     if( $gem_id == 2){
         while (award_nth_translation($translation_count, $gem_id)  == true){
             $counter++;
         }
         continue;
-    }
-    if( check_if_awarded($gem_id) == false ){
-        give_award($gem_id);
+    } elseif( $gem_id == 3 && $awarded == false ){
+        if( award_first_vote($gem_id) == true)
+            $counter++;
+    } elseif(  $gem_id ==4 ) {
+     
+     while( award_nth_vote($gem_id) == true ){
         $counter++;
     }
+    continue;
+} elseif( $gem_id == 1 && $awarded == false ) {
+    give_award($gem_id);
+    $counter++;
+}
 }
 
 return $counter;
@@ -182,15 +196,10 @@ function  award_nth_translation($translation_count, $gem_id)
 
     global $_TABLES, $_USER;
 
-    $query = "SELECT `award_lvl` FROM {$_TABLES['awarded_gems']} WHERE `user_id` = {$_USER['uid']} AND `gem_id` = {$gem_id}";
-    $result = DB_query($query);
-    if( $row = DB_fetchArray($result) )
-        $award_lvl = $row['award_lvl'] + 1;
-    else
-        $award_lvl = 2;
+    $award_lvl=0;
+    $award_mark=0;
 
-    $award_mark = ( 3 * ($award_lvl*$award_lvl) - $award_lvl )/2;
-
+    award_mark($gem_id, $award_lvl, $award_mark);
     if ( $translation_count >= $award_mark ){
         give_award($gem_id, $award_lvl);
         return true;
@@ -210,10 +219,11 @@ function check_if_awarded($gem_id)
 
     global $_USER, $_TABLES;
 
-    $query = "SELECT COUNT(`gem_id`) AS count FROM {$_TABLES['awarded_gems']} WHERE `gem_id` = 1 AND `user_id` = {$_USER['uid']}";
+    $query = "SELECT COUNT(`gem_id`) AS count FROM {$_TABLES['awarded_gems']} WHERE `gem_id` = {$gem_id} AND `user_id` = {$_USER['uid']}";
     $result = DB_query($query);
 
-    $count = DB_fetchArray($result)['count'];
+    $count = DB_fetchArray($result);
+    $count = $count['count'];
 
     if($count > 0)
         return true;
@@ -228,13 +238,14 @@ function check_if_awarded($gem_id)
 */
 function give_award($gem_id=null, $award_lvl=0)
 {   
+    global $_TABLES, $_USER;
 
     if($gem_id == null)
         return;
 
     global $_USER, $_TABLES;
 
-    if($award_lvl == 0)
+    if($award_lvl == 0 || $award_lvl == 2)
         $query = "INSERT INTO {$_TABLES['awarded_gems']} (`gem_id`, `user_id`, `award_lvl`) VALUES ({$gem_id}, {$_USER['uid']}, {$award_lvl})";
     else
         $query = "UPDATE {$_TABLES['awarded_gems']} SET `award_lvl` = {$award_lvl} WHERE `gem_id` = {$gem_id}";
@@ -242,8 +253,65 @@ function give_award($gem_id=null, $award_lvl=0)
     DB_query($query);
 }
 
+function award_first_vote($gem_id)
+{
+
+    global $_TABLES, $_USER;
+
+    $query = "SELECT COUNT(`translation_id`) as count FROM {$_TABLES['votes']}  WHERE `translation_id` NOT IN ( SELECT `id` FROM {$_TABLES['translations']} WHERE `user_id` = {$_USER['uid']} )";
+    $result = DB_query($query);
+    $result = DB_fetchArray($result);
+    $votes_count = $result['count'];
+    if($votes_count >= 1){
+        give_award($gem_id);
+    } 
 
 
+}
+
+function award_nth_vote($gem_id)
+{
+    global $_TABLES, $_USER;
+
+    $query = "SELECT COUNT(`translation_id`) as count FROM {$_TABLES['votes']}  WHERE `translation_id` NOT IN ( SELECT `id` FROM {$_TABLES['translations']} WHERE `user_id` = {$_USER['uid']} )";
+
+    $result = DB_query($query);
+    $result = DB_fetchArray($result);
+    $votes_count = $result['count'];
+
+    if( $votes_count < 5 )
+        return;
+
+    $award_lvl=0;
+    $award_mark=0;
+
+    award_mark($gem_id, $award_lvl, $award_mark);
+
+    if( $votes_count >=  $award_mark){
+        give_award($gem_id, $award_lvl);
+        return true;
+    }
+
+    return false;
+
+
+}
+
+
+function award_mark($gem_id, &$award_lvl, &$award_mark){
+
+    global $_TABLES, $_USER;
+
+    $query = "SELECT `award_lvl` FROM {$_TABLES['awarded_gems']} WHERE `user_id` = {$_USER['uid']} AND `gem_id` = {$gem_id}";
+    $result = DB_query($query);
+    if( $row = DB_fetchArray($result) )
+        $award_lvl = $row['award_lvl'] + 1;
+    else
+        $award_lvl = 2;
+
+    $award_mark = ( 3 * ($award_lvl*$award_lvl) - $award_lvl )/2;
+
+}
 
 
 ?>

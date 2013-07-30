@@ -271,6 +271,12 @@ function hide_language_input()
  {
     var r_url = get_base_url();
     r_url += "get_original_language_values.php";
+
+    for(var i=0; i<language_strings.length; i++){
+        language_strings[i].string='';
+    }
+
+
     var json_ob = JSON.stringify(language_strings);
 
     var ajaxRequest = $.ajax({
@@ -281,6 +287,7 @@ function hide_language_input()
 
     ajaxRequest.done(function(response, textStatus, jqKHR)
     {
+
         var response_object = JSON.parse(response);
         var form = response_object['form'];
 
@@ -294,6 +301,7 @@ function hide_language_input()
 
     ajaxRequest.fail(function(jqXHR, textStatus, errorThrown)
     {
+        console.log(jqXHR);
         var error = "<div class='error' > There has been an error retrieving the data.";
         error += "If this persists contact the site admin or <a href='mailto: b.ttalic@gmail.com?Subject=Translator%20Plugin%20Error'>b.ttalic</a></div>";
         $('#submission_form').append(error);
@@ -335,13 +343,13 @@ function show_progress_bar(translated)
 
     ajaxRequest.done(function(response, textStatus, jqXHR)
     {
-        console.log(response);
+     
         var response_object = JSON.parse(response);
         var bad_inputs = response_object['bad_input'];
         var good_inputs = response_object['good_input'];
         var translated = response_object['translated'];
         var awards = response_object['awards_number']
-        console.log(awards);
+      
         mark_bad_inputs(bad_inputs);
         remove_submited(good_inputs);
         if( awards > 0)
@@ -389,7 +397,8 @@ function show_progress_bar(translated)
 * Adds notification to side view if awards have been given
 * @param int award number of awards given
 */
-function add_notification(awards){
+function add_notification(awards)
+{
     $('.notification_badge').html(awards);
     var tooltip_content = "You have " + awards + " new badge(s)!!! Check them out!";
     $('.notification_badge').parent().attr('title', tooltip_content);
@@ -544,7 +553,7 @@ function add_notification(awards){
     }
 }
 r_url = r_url.substring(0, r_url.indexOf(script_name));  
-return r_url;
+return r_url.toLowerCase();
 }
 
 /*Gets the script saved cookie
@@ -652,7 +661,6 @@ function hide_guidelines()
     if (limit == 0)
         limit = null;
 
-    console.log(order_by);
 
     r_url = get_base_url();
     r_url += "lib-translator.php";
@@ -722,7 +730,7 @@ function hide_guidelines()
 
         r_url = get_base_url();
         r_url += "lib-translator.php";
-        console.log('get all');
+     
         var ajaxRequest = $.ajax({
             url: r_url,
             data: {function: 'get_user_badges', admin: admin},
@@ -731,7 +739,7 @@ function hide_guidelines()
 
         ajaxRequest.done(function(response, textStatus, jqKHR)
         {
-            console.log(response);
+           
             $('#badges_display').html(response);
             $('#badges_show').html('(hide)');
         });
@@ -762,7 +770,7 @@ function hide_guidelines()
     var script = $('#show_next').attr("onclick");
     script = script.substring(script.indexOf('('));
         var params = script.split(',');
-        console.log(params);
+      
         var admin = parseInt(params[2]);
         var order_by = params[3];
         order_by = order_by.replace(')', '');
