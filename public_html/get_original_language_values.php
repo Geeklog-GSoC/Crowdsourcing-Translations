@@ -12,11 +12,13 @@ require_once ($_CONF['path_system'] . 'lib-database.php');
 require_once "./lib-translator.php";
 
 
-if( (check_post_variable("language", $error) == false) 
-    || (check_post_variable("objects", $error) == false) )
+
+if( (check_post_variable("language") == false) 
+    || (check_post_variable("objects") == false) )
    exit;
 
 $language=$_POST['language'];
+
 $myArray = json_decode(stripslashes($_POST['objects']));
 
 $response=array();
@@ -46,7 +48,7 @@ foreach ($language_array as $key => $value) {
     while($row=DB_fetchArray ($result) ){
         //making <var> and <tag> html friendly
         if( strpos($row['string'], "<tag>") !== false || strpos($row['string'], "<var>") !== false ){
-            
+
             $taged=new stdClass();
             $taged->tag=substr_count($row['string'],"<tag>");
             $taged->var=substr_count($row['string'],"<var>");
@@ -74,7 +76,7 @@ foreach ($language_array as $key => $value) {
 
     $disabled_up=''; $disabled_down='';
     //if the user has voted for the current string the upvote or downvote buttons should be disabled
-    if($value->translation_id){
+    if(isset($value->translation_id) && !empty($value->translation_id)){
         $result = DB_query("SELECT `sign` FROM {$_TABLES['votes']} WHERE `user_id` = {$user_id} AND `translation_id`='{$value->translation_id}'");
 
         if($row=DB_fetchArray($result)){
@@ -160,6 +162,8 @@ function add_form_element(&$form, $count, $value, $base_url, $disabled_up, $disa
 
     $form.=$template;
 }
+
+
 
 
 ?>
