@@ -12,8 +12,8 @@ require_once "./lib-translator.php";
 $user_id=$_USER['uid'];
 $response['refresh']=false;
 
-if( (check_post_variable("translation_id", $error) == false) 
-    || (check_post_variable("sign", $error) == false) )
+if( (check_post_variable("translation_id") == false) 
+    || (check_post_variable("sign") == false) )
    exit;
 
 //user has to be logged in to vote

@@ -189,8 +189,9 @@ function get_user_badges($limit = -1, $admin = 0, $show_not_awarded = true)
 		$query = "SELECT g.title, g.tooltip, g.image, a.award_lvl FROM {$_TABLES['awarded_gems']} as a INNER JOIN {$_TABLES['gems']} as g ON a.gem_id = g.gem_id  WHERE a.user_id = {$_USER['uid']}";
 	}
 
-	$limit -= DB_numRows($result);
 	$result = DB_query($query);
+	$limit -= DB_numRows($result);
+	
 	$count = 0;
 	if (DB_numRows($result) > 0)
 	{
@@ -212,7 +213,7 @@ function get_user_badges($limit = -1, $admin = 0, $show_not_awarded = true)
 		}
 		$result = DB_query($query);
 		while ($row = DB_fetchArray($result)){
-			$display .= display_badge($row, $count, $award_lvl, 'disabled_badge');
+			$display .= display_badge($row, $count, '', 'disabled_badge');
 		}
 	}
 	return $display;
@@ -697,14 +698,17 @@ function remove_block($user_id = null)
 	{
 		$query = "DELETE FROM {$_TABLES['blocked_users']} WHERE `user_id` = {$user_id}";
 		DB_query($query);
+
 	}
 }
 
-function check_post_variable($post_var, &$error){
+function check_post_variable($post_var){
+	$error = new stdClass();
     if(!isset($_POST[$post_var]) || empty($_POST[$post_var])){
-        $error->message="Objects no set";
+        $error->message="{$post_var} no set";
         $error->error_code='1';
         echo json_encode($error);
+        echo var_dump($_POST[$post_var]);
         return false;
     }
     return true;

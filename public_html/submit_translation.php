@@ -4,8 +4,8 @@ require_once '../lib-common.php';
 require_once ($_CONF['path_system'] . 'lib-database.php');
 require_once "./lib-translator.php";
 
-if( (check_post_variable("taged_strings", $error) == false) 
-    || (check_post_variable("count", $error) == false) )
+if( (check_post_variable("taged_strings") == false) 
+    || (check_post_variable("count") == false) )
    exit;
 
 
@@ -45,7 +45,7 @@ for($i=0; $i<$count; $i++){
         //if the input passed the previous test a new object is created with all relevant data for the translation
         if($faulty==false){
             $input=new stdClass();  
-            if ( check_post_variable($metadata_name, $error) == false )
+            if ( check_post_variable($metadata_name) == false )
                 exit;
             extract_metadata($_POST[$metadata_name], $input->language_array, $input->array_key);
             $input->language_full_name=$language;

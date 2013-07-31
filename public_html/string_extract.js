@@ -278,10 +278,10 @@ function hide_language_input()
 
 
     var json_ob = JSON.stringify(language_strings);
-
+    var language = getCookie('selected_language');
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: {objects: json_ob, language: getCookie('selected_language')},
+        data: {objects: json_ob, language: language},
         type: "POST"
     });
 
@@ -289,6 +289,12 @@ function hide_language_input()
     {
 
         var response_object = JSON.parse(response);
+        var error_code = response_object['error_code'];
+
+        if(error_code >= 1){
+            error_handler();
+            return;
+        }
         var form = response_object['form'];
 
         language_strings = response_object['language_array'];
@@ -307,6 +313,13 @@ function hide_language_input()
         $('#submission_form').append(error);
 
     });
+}
+
+function error_handler()
+{
+        var error = "<div class='error' > There has been an error retrieving the data.";
+        error += "If this persists contact the site admin or <a href='mailto: b.ttalic@gmail.com?Subject=Translator%20Plugin%20Error'>b.ttalic</a></div>";
+        $('#submission_form').append(error);
 }
 
 /*Will show a graphical representation of the amount of translated
