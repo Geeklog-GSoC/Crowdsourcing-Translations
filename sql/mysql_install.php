@@ -90,6 +90,14 @@ CREATE TABLE {$_TABLES['awarded_gems']} (
 ";
 
 $_SQL[] = "
+CREATE TABLE {$_TABLES['language_map']} (
+ page_url varchar (50)  NOT NULL,
+ reference text NOT NULL,
+ includes text NOT NULL
+) ENGINE=MyISAM
+";
+
+$_SQL[] = "
 CREATE TABLE {$_TABLES['blocked_users']} (
  user_id int  NOT NULL,
  timestamp datetime NOT NULL,
