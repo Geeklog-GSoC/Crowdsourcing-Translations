@@ -1,5 +1,4 @@
 <?php
-
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
 // | crowdtranslator Plugin 0.1                                                |
@@ -30,102 +29,89 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-
 /**
-* @package crowdtranslator
-*/
-
+ * @package crowdtranslator
+ */
 /**
-* Plugin autoinstall function
-*
-* @param    string  $pi_name    Plugin name
-* @return   array               Plugin information
-*
-*/
-function plugin_autoinstall_crowdtranslator($pi_name)
+ * Plugin autoinstall function
+ *
+ * @param    string  $pi_name    Plugin name
+ * @return   array               Plugin information
+ *
+ */
+function plugin_autoinstall_crowdtranslator( $pi_name )
 {
     $pi_name         = 'crowdtranslator';
     $pi_display_name = 'Crowd Translator';
-   $pi_admin        = $pi_display_name . ' Admin';
-
-    $info = array(
-        'pi_name'         => $pi_name,
+    $pi_admin        = $pi_display_name . ' Admin';
+    $info            = array(
+         'pi_name' => $pi_name,
         'pi_display_name' => $pi_display_name,
-        'pi_version'      => '1',
-        'pi_gl_version'   => '2.0.0',
-        'pi_homepage'     => 'http://www.example.com/'
+        'pi_version' => '1',
+        'pi_gl_version' => '2.0.0',
+        'pi_homepage' => 'http://www.example.com/' 
     );
-
-    $groups = array(
-        $pi_admin => 'Users in this group can administer the '
-                     . $pi_display_name . ' plugin'
+    $groups          = array(
+         $pi_admin => 'Users in this group can administer the ' . $pi_display_name . ' plugin' 
     );
-
-    $features = array(
-        $pi_name . '.admin'    => 'Full access to ' . $pi_display_name
-                                  . ' plugin'
+    $features        = array(
+         $pi_name . '.admin' => 'Full access to ' . $pi_display_name . ' plugin' 
     );
-
-    $mappings = array(
-        $pi_name . '.admin'     => array($pi_admin)
+    $mappings        = array(
+         $pi_name . '.admin' => array(
+             $pi_admin 
+        ) 
     );
-
-
-    $tables = array(
-        'translations',
+    $tables          = array(
+         'translations',
         'originals',
         'votes',
-        'gems', 
+        'gems',
         'awarded_gems',
-        'blocked_users'
+        'blocked_users',
+        'language_map' 
     );
-
-
     // Version control and dependencies settings for Geeklog 1.8.0+
     // http://wiki.geeklog.net/index.php/Plugin_Autoinstall#Plugin_dependencies_and_version_control
-    $requires = array(
-        array('db' => 'mysql', 'version' => '4.1'),
-        array('db' => 'mssql')
+    $requires        = array(
+         array(
+             'db' => 'mysql',
+            'version' => '4.1' 
+        ),
+        array(
+             'db' => 'mssql' 
+        ) 
     );
-
-    $inst_parms = array(
-        'info'      => $info,
-        'groups'    => $groups,
-        'features'  => $features,
-        'mappings'  => $mappings,
-        'tables'    => $tables,
-        'requires'  => $requires
+    $inst_parms      = array(
+         'info' => $info,
+        'groups' => $groups,
+        'features' => $features,
+        'mappings' => $mappings,
+        'tables' => $tables,
+        'requires' => $requires 
     );
-
     return $inst_parms;
 }
 /**
-* Create the initial configuration for the plugin
-*/
-
-function plugin_load_configuration_crowdtranslator($pi_name)
+ * Create the initial configuration for the plugin
+ */
+function plugin_load_configuration_crowdtranslator( $pi_name )
 {
     global $_CONF;
-
-    $base_path = $_CONF['path'] . 'plugins/' . $pi_name . '/';
-
-    require_once $_CONF['path_system'] . 'classes/config.class.php';
+    $base_path = $_CONF[ 'path' ] . 'plugins/' . $pi_name . '/';
+    require_once $_CONF[ 'path_system' ] . 'classes/config.class.php';
     require_once $base_path . 'install_defaults.php';
-
     return plugin_initconfig_crowdtranslator();
 }
-
 /**
-* Check if the plugin is compatible with this Geeklog version
-*
-* @param    string  $pi_name    Plugin name
-* @return   boolean             true: plugin compatible; false: not compatible
-*
-*/
-
-function plugin_compatible_with_this_version_crowdtranslator($pi_name)
+ * Check if the plugin is compatible with this Geeklog version
+ *
+ * @param    string  $pi_name    Plugin name
+ * @return   boolean             true: plugin compatible; false: not compatible
+ *
+ */
+function plugin_compatible_with_this_version_crowdtranslator( $pi_name )
 {
     return true;
 }
-
 ?>

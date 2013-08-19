@@ -1,3 +1,4 @@
+
 /**
  * persistant variable set
  * @param array language_strings an array of type Language_string, the Language_string object holds all important data of the LANG strings
@@ -13,9 +14,7 @@
 
  $(document).ready(function()
  {
-    //will extract markup from the strings
-    re_render_html();
-    additional_purge();
+
     add_autocomplete_to_language_input();
 
     //check if the language is already selected if it is the selection form will not be shown
@@ -45,165 +44,6 @@
 
 });
 
-/*############################################################################
- ## The next part of the script handles the initial re rendering of the page ##
- ## Including extracting the LANG strings, removing markups etc              ##
- #############################################################################*/
-
-
-
-/*
- * retrieves the HTML of the current page
- * removes all identifiers the plugin made for strings
- * returns the clean html to the browser
- */
- function re_render_html()
- {
-    var html = $("html").html();
-
-    while (html.indexOf('_-start_') > -1) {
-
-        var start_point = html.indexOf("_-start_") + 8;
-
-        var end_point = html.indexOf("_-end_");
-
-        //extracting the original LANG string and the metadata
-        var data = html.substring(start_point, end_point);
-        var new_object = new Language_string(data)
-
-        add_to_language_array(new_object);
-
-        data = "_-start_" + data + "_-end_";
-        while (html.indexOf(data) > -1) {
-            html = remove_identificators(html, data, false, new_object);
-        }
-    }
-    document.documentElement.innerHTML = html;
-}
-
-/* Creates a object from the data passed by the LANG arrays
- *@param data string the extracted data from the rendered page
- */
- function Language_string(data)
- {
-    this.array_name = extract_array_name(data);
-    this.array_index = extract_array_index(data);
-    this.string = extract_string(data);
-    this.metadata = metadata(this.array_name, this.array_index);
-
-    function extract_array_name(data)
-    {
-        var start_point = data.indexOf("array__") + 7;
-        var end_point = data.indexOf("index__");
-        var array_name = data.substring(start_point, end_point);
-        return array_name;
-    }
-    ;
-
-    function extract_array_index(data)
-    {
-        var start_point = data.indexOf("index__") + 7;
-        var end_point = data.indexOf("||", data.indexOf("||") + 2);
-        var array_index = data.substring(start_point, end_point);
-        return array_index;
-    }
-    ;
-
-    function extract_string(data)
-    {
-        var start_point = data.indexOf("||", data.indexOf("||") + 2) + 2;
-        var string = data.substring(start_point, data.length);
-        return string;
-    }
-    ;
-
-    function metadata(array_name, array_index)
-    {
-        var meta = "array_" + array_name + "index_" + array_index;
-        meta = meta.replace('$', '');
-        return meta;
-    }
-
-    this.equals = function equals(other_language_string)
-    {
-        if ((this.array_name == other_language_string.array_name) && (this.array_index == other_language_string.array_index))
-            return true;
-        else
-            return false;
-    };
-
-}
-
-
-//Make sure every element is unique before adding it to the array
-function add_to_language_array(element)
-{
-    for (var i = 0; i < language_strings.length; i++) {
-        if (language_strings[i].equals(element)) {
-            return;
-        }
-    }
-    language_strings.push(element);
-}
-
-/**
- *removes identificators from the html, if appropriate adds <span>
- *@param string html the html of the current page
- *@param string data the extracted data part
- *@param boolean isFirst true if first occurence of the string
- *@param object new_object the object created from the data parameter
- *@return returns the purged html
- */
-
- function remove_identificators(html, data, isFirst, new_object)
- {
-    //need the offset to make sure that the new <span> is not added to html tags such as <title>
-    var offset = 50;
-    if (html.indexOf(data) < 50) {
-        offset = html.indexOf(data);
-    }
-    var test_string = html.substring(html.indexOf(data) - offset, html.indexOf(data) + data.length);
-
-    var isTag = true;
-    var flags = ["<title>", "value=", "title=", "alt=", "onclick="];
-    for (var i = 0; i < flags.length; i++) {
-        if (test_string.indexOf(flags[i]) > 0)
-            isTag = false;
-    }
-
-    if (isFirst == true) {
-
-        if (isTag) {
-            html = html.replace("_-start_", "<span class='" + new_object.metadata + "'>");
-            html = html.replace("_-end_", "</span>");
-        } else {
-            html = html.replace("_-start_", "");
-            html = html.replace("_-end_", "");
-        }
-
-    } else {
-
-        if (isTag)
-            html = html.replace(data, "<span class='" + new_object.metadata + "'>" + new_object.string + "</span>");
-        else
-            html = html.replace(data, new_object.string);
-    }
-
-    return html;
-}
-
-/**
- *In case there has been a oversee in removing identificators
- * this function will take care of them
- */
- function additional_purge()
- {
-    for (var i = 0; i < language_strings.length; i++) {
-        if (language_strings[i].string.indexOf("_-start_") > 0) {
-            language_strings[i].string = language_strings[i].string.substring(0, language_strings[i].string.indexOf("_-start_"));
-        }
-    }
-}
 
 /*
  * Gets list of available languages for translation via AJAX call
@@ -277,11 +117,11 @@ function hide_language_input()
     }
 
 
-    var json_ob = JSON.stringify(language_strings);
     var language = getCookie('selected_language');
+    var html = $('html').text();
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: {objects: json_ob, language: language},
+        data: { language: language, url: location.host + location.pathname, html: html  },
         type: "POST"
     });
 
@@ -300,9 +140,10 @@ function hide_language_input()
         language_strings = response_object['language_array'];
         taged_strings = response_object['taged_strings'];
         show_progress_bar(response_object['translated']);
-
-        if ($('#translator_form').size() > 0)
-            $('#submission_form').append(form);
+        
+        if ($('#translator_form').size() > 0){
+            $('#submission_form').append(form); 
+        }
     });
 
     ajaxRequest.fail(function(jqXHR, textStatus, errorThrown)
@@ -315,11 +156,12 @@ function hide_language_input()
     });
 }
 
+
 function error_handler()
 {
-        var error = "<div class='error' > There has been an error retrieving the data.";
-        error += "If this persists contact the site admin or <a href='mailto: b.ttalic@gmail.com?Subject=Translator%20Plugin%20Error'>b.ttalic</a></div>";
-        $('#submission_form').append(error);
+    var error = "<div class='error' > There has been an error retrieving the data.";
+    error += "If this persists contact the site admin or <a href='mailto: b.ttalic@gmail.com?Subject=Translator%20Plugin%20Error'>b.ttalic</a></div>";
+    $('#submission_form').append(error);
 }
 
 /*Will show a graphical representation of the amount of translated
@@ -356,17 +198,17 @@ function show_progress_bar(translated)
 
     ajaxRequest.done(function(response, textStatus, jqXHR)
     {
-     
+
         var response_object = JSON.parse(response);
         var bad_inputs = response_object['bad_input'];
         var good_inputs = response_object['good_input'];
         var translated = response_object['translated'];
         var awards = response_object['awards_number']
-      
+
         mark_bad_inputs(bad_inputs);
         remove_submited(good_inputs);
         if( awards > 0)
-        add_notification(awards);
+            add_notification(awards);
 
 
     });
@@ -520,12 +362,20 @@ function add_notification(awards)
  {
     var id = event.target.id;
     id = id.replace('_image', '');
-    var value = $('#' + id + "_hidden").val();
+    var value = $('label[for="' + id + '"]').html();
+    id = id.replace("translator_input_", "");
+    console.log(value);
+    console.log(id);
+    console.log(language_strings[id].parsed);
+    regexp = new RegExp(language_strings[id].parsed, "g");
+        html = document.documentElement.innerHTML;
+    console.log(regexp);
+    console.log(regexp.exec(html));
+    html = html.replace(regexp, "<span class='translator_highlighted'>"+language_strings[id].parsed+"</span>");
 
-    var class_name = '.' + value;
-    $(class_name).each(function() {
-        $(this).addClass('translator_highlighted');
-    });
+//console.log(html);
+//console.log(regexp.exec($('html').text()));
+document.documentElement.innerHTML = html;
 }
 /**
  * removes CSS class of highlighted string(s) on page
@@ -743,7 +593,7 @@ function hide_guidelines()
 
         r_url = get_base_url();
         r_url += "lib-translator.php";
-     
+
         var ajaxRequest = $.ajax({
             url: r_url,
             data: {function: 'get_user_badges', admin: admin},
@@ -752,7 +602,7 @@ function hide_guidelines()
 
         ajaxRequest.done(function(response, textStatus, jqKHR)
         {
-           
+
             $('#badges_display').html(response);
             $('#badges_show').html('(hide)');
         });
@@ -783,7 +633,7 @@ function hide_guidelines()
     var script = $('#show_next').attr("onclick");
     script = script.substring(script.indexOf('('));
         var params = script.split(',');
-      
+
         var admin = parseInt(params[2]);
         var order_by = params[3];
         order_by = order_by.replace(')', '');
@@ -848,4 +698,8 @@ function hide_guidelines()
         console.log(textStatus);
     });
 
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }

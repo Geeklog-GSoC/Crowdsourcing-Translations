@@ -1,5 +1,4 @@
 <?php
-
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
 // | crowdtranslator Plugin 0.1                                                |
@@ -30,68 +29,51 @@
 // | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
-
 /**
-* @package crowdtranslator
-*/
-
-if (strpos(strtolower($_SERVER['PHP_SELF']), 'functions.inc') !== false) {
-    die ('This file can not be used on its own.');
+ * @package crowdtranslator
+ */
+if ( strpos( strtolower( $_SERVER[ 'PHP_SELF' ] ), 'functions.inc' ) !== false ) {
+    die( 'This file can not be used on its own.' );
 }
-
-
-
-$plugin_path = $_CONF['path'] . 'plugins/crowdtranslator/';
-require_once $plugin_path."/language_markup.php";
-add_identifier_to_lanugage_file();
-
-
+$plugin_path = $_CONF[ 'path' ] . 'plugins/crowdtranslator/';
+require_once $plugin_path . "language_maper.php";
+language_maper();
 /**
-* crowdtranslator default settings
-*
-* Initial Installation Defaults used when loading the online configuration
-* records.  These settings are only used during the initial installation
-* and not referenced any more once the plugin is installed
-*/
+ * crowdtranslator default settings
+ *
+ * Initial Installation Defaults used when loading the online configuration
+ * records.  These settings are only used during the initial installation
+ * and not referenced any more once the plugin is installed
+ */
 global $_CROWDTRANSLATOR_DEFAULT;
-$_CROWDTRANSLATOR_DEFAULT = array();
-
+$_CROWDTRANSLATOR_DEFAULT                   = array( );
 // This is the default for 'samplesetting1'
-
-
-$_CROWDTRANSLATOR_DEFAULT['enabled'] = true;
-$_CROWDTRANSLATOR_DEFAULT['block_enable']=true;
-
-
+$_CROWDTRANSLATOR_DEFAULT[ 'enabled' ]      = true;
+$_CROWDTRANSLATOR_DEFAULT[ 'block_enable' ] = true;
 /**
-* Initialize crowdtranslator plugin configuration
-*
-* Creates the database entries for the configuation if they don't already
-* exist.  Initial values will be taken from $_CROWDTRANSLATOR_DEFAULT.
-*
-* @return   boolean     TRUE: success; FALSE: an error occurred
-*/
-function plugin_initconfig_crowdtranslator()
+ * Initialize crowdtranslator plugin configuration
+ *
+ * Creates the database entries for the configuation if they don't already
+ * exist.  Initial values will be taken from $_CROWDTRANSLATOR_DEFAULT.
+ *
+ * @return   boolean     TRUE: success; FALSE: an error occurred
+ */
+function plugin_initconfig_crowdtranslator( )
 {
     global $_CROWDTRANSLATOR_CONF, $_CROWDTRANSLATOR_DEFAULT;
-
-    if (is_array($_CROWDTRANSLATOR_CONF) && (count($_CROWDTRANSLATOR_CONF) > 1)) {
-        $_CROWDTRANSLATOR_DEFAULT = array_merge($_CROWDTRANSLATOR_DEFAULT, $_CROWDTRANSLATOR_CONF);
+    if ( is_array( $_CROWDTRANSLATOR_CONF ) && ( count( $_CROWDTRANSLATOR_CONF ) > 1 ) ) {
+        $_CROWDTRANSLATOR_DEFAULT = array_merge( $_CROWDTRANSLATOR_DEFAULT, $_CROWDTRANSLATOR_CONF );
     }
-
     $me = 'crowdtranslator';
-
-    $c = config::get_instance();
-    if (!$c->group_exists($me)) {
-
-        $c->add('sg_main', NULL, 'subgroup', 0, 0, NULL, 0, true, $me, 0);
-        $c->add('tab_main', NULL, 'tab', 0, 0, NULL, 0, true, $me, 0);
-        $c->add('fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true, $me, 0);
+    $c  = config::get_instance();
+    if ( !$c->group_exists( $me ) ) {
+        $c->add( 'sg_main', NULL, 'subgroup', 0, 0, NULL, 0, true, $me, 0 );
+        $c->add( 'tab_main', NULL, 'tab', 0, 0, NULL, 0, true, $me, 0 );
+        $c->add( 'fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true, $me, 0 );
         // The below two lines add two settings to Geeklog's config UI
-        $c->add('enabled', $_CROWDTRANSLATOR_DEFAULT['enabled'], 'select', 0, 0, 0, 10, true, $me, 0); // This adds a drop-down box
-        $c->add('block_enable', $_CROWDTRANSLATOR_DEFAULT['block_enable'], 'select',  0, 0, 0, 10, true, $me, 0);
+        $c->add( 'enabled', $_CROWDTRANSLATOR_DEFAULT[ 'enabled' ], 'select', 0, 0, 0, 10, true, $me, 0 ); // This adds a drop-down box
+        $c->add( 'block_enable', $_CROWDTRANSLATOR_DEFAULT[ 'block_enable' ], 'select', 0, 0, 0, 10, true, $me, 0 );
     }
-
     return true;
 }
 ?>
