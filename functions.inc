@@ -291,8 +291,6 @@ function plugin_autouninstall_crowdtranslator( )
 {
     global $_CONF;
     $plugin_path = $_CONF[ 'path' ] . 'plugins/crowdtranslator/';
-    require_once $plugin_path . "language_markup.php";
-    remove_identifier_to_lanugage_file();
     $out = array(
         /* give the name of the tables, without $_TABLES[] */
          'tables' => array(
@@ -331,7 +329,7 @@ function plugin_getBlocks_crowdtranslator( $side, $topic = '' )
 
             <div class='translator' id='translator'>
         
-            </br>
+            <br>
             <span id='change_language'></span>
             <form id='translator_form' method=post >
             <label id='translator_language_label'>Enter Language: </label>

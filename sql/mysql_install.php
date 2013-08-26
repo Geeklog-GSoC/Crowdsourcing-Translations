@@ -42,8 +42,9 @@ CREATE TABLE {$_TABLES['translations']} (
     approval_counts int NOT NULL,
     language_array varchar (30) NOT NULL,
     array_key varchar (20) NOT NULL,
+    array_subindex varchar (20) NOT NULL,
     translation varchar (200) NOT NULL,
-  PRIMARY KEY (id, language_full_name,  language_array, array_key )
+  PRIMARY KEY (id, language_full_name,  language_array, array_key, array_subindex )
 ) ENGINE=MyISAM
 ";
 
@@ -54,9 +55,10 @@ CREATE TABLE {$_TABLES['originals']} (
     plugin_name varchar (50) NOT NULL,
     language_array varchar (30) NOT NULL,
     array_index varchar (20) NOT NULL,
+    sub_index varchar (20) NOT NULL,
     string varchar (200) NOT NULL,
     tags text,
-  PRIMARY KEY (id, language, plugin_name, language_array, array_index)
+  PRIMARY KEY (id, language, plugin_name, language_array, array_index, sub_index)
 ) ENGINE=MyISAM
 ";
 

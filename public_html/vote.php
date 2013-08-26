@@ -18,7 +18,8 @@ if ( !empty( $user_id ) && isset( $user_id ) ) {
      */
     if ( DB_numRows( $result ) == 0 ) {
         $result = DB_query( "INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$user_id}', '{$sign}') " );
-    } else {
+    } //DB_numRows( $result ) == 0
+    else {
         $previous_sign = DB_fetchArray( $result );
         $previous_sign = $previous_sign[ 'sign' ];
         $result        = DB_query( "UPDATE {$_TABLES['votes']} SET `sign`='{$sign}'   WHERE `translation_id`='{$translation_id}' AND `user_id`='{$user_id}' " );
@@ -37,8 +38,9 @@ if ( !empty( $user_id ) && isset( $user_id ) ) {
         if ( $result ) {
             $query = "DELETE FROM {$_TABLES['votes']} WHERE `translation_id`='{$translation_id}' ";
             DB_query( $query );
-        }
-    }
+        } //$result
+    } //$approval_counts <= -5
     echo json_encode( $response );
-}
+} //!empty( $user_id ) && isset( $user_id )
 ?>
+Download
