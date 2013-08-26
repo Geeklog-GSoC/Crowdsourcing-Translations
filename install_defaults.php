@@ -36,6 +36,7 @@ if ( strpos( strtolower( $_SERVER[ 'PHP_SELF' ] ), 'functions.inc' ) !== false )
     die( 'This file can not be used on its own.' );
 }
 $plugin_path = $_CONF[ 'path' ] . 'plugins/crowdtranslator/';
+
 require_once $plugin_path . "language_maper.php";
 language_maper();
 /**

@@ -104,6 +104,11 @@ function hide_language_input()
 
     $('#selected_language').remove();
 }
+
+
+
+
+
 /* Sends a AJAX request to get formated LANG strings
  * and the acctual translation form
  */
@@ -118,7 +123,7 @@ function hide_language_input()
 
 
     var language = getCookie('selected_language');
-    var html = $('html').text();
+    var html = $('#container').html();
     var ajaxRequest = $.ajax({
         url: r_url,
         data: { language: language, url: location.host + location.pathname, html: html  },
@@ -130,13 +135,13 @@ function hide_language_input()
 
         var response_object = JSON.parse(response);
         var error_code = response_object['error_code'];
-
+        
         if(error_code >= 1){
             error_handler();
             return;
         }
+        
         var form = response_object['form'];
-
         language_strings = response_object['language_array'];
         taged_strings = response_object['taged_strings'];
         show_progress_bar(response_object['translated']);
@@ -156,6 +161,12 @@ function hide_language_input()
     });
 }
 
+function find_by_string( string ){
+    var elms = $(":contains("+language_strings[2].string+")");
+    elms.each( function () {
+        console.log(this.id);
+    });
+}
 
 function error_handler()
 {
@@ -209,7 +220,7 @@ function show_progress_bar(translated)
         remove_submited(good_inputs);
         if( awards > 0)
             add_notification(awards);
-
+        doSearch( language_strings[2]);
 
     });
 
@@ -354,44 +365,56 @@ function add_notification(awards)
 }
 
 
+function doSearch(text, value)
+{
+    if (window.find && window.getSelection) {
+        document.designMode = "on";
+        var sel = window.getSelection();
+        sel.collapse(document.body, 0);
+        
+        while (window.find(text)) {
+            document.execCommand("backcolor", false, "yellow");            
+            sel.collapseToEnd();
+        }
+        document.designMode = "off";
+    } else if (document.body.createTextRange) {
+        var textRange = document.body.createTextRange();
+        while (textRange.findText(text)) {
+            textRange.execCommand("backcolor", false, value);
+            textRange.collapse(false);
+        }
+        while (textRange.findText(text)) {
+            textRange.execCommand("hiliteColor", false, value);
+            textRange.collapse(false);
+        }
+    }
+}
+
+
+function prep_doSearch( text, value )
+{
+   text = text.replace( /&lttag&gt/g, "" );
+   text = text.replace( /&ltvar&gt/g, "" );
+   text = text.replace(/\s+/g, " ");
+   doSearch( text, value );
+   console.log(text);
+}
+
 
 /**
  * adds CSS class to highligh selected string(s) on page
  */
- function highlight()
+ function highlight(id)
  {
-    var id = event.target.id;
-    id = id.replace('_image', '');
-    var value = $('label[for="' + id + '"]').html();
-    id = id.replace("translator_input_", "");
-    console.log(value);
-    console.log(id);
-    console.log(language_strings[id].parsed);
-    regexp = new RegExp(language_strings[id].parsed, "g");
-        html = document.documentElement.innerHTML;
-    console.log(regexp);
-    console.log(regexp.exec(html));
-    html = html.replace(regexp, "<span class='translator_highlighted'>"+language_strings[id].parsed+"</span>");
-
-//console.log(html);
-//console.log(regexp.exec($('html').text()));
-document.documentElement.innerHTML = html;
+    prep_doSearch(language_strings[id].string, "yellow");
 }
 /**
  * removes CSS class of highlighted string(s) on page
  */
- function remove_highlight()
+ function remove_highlight(id)
  {
-    var id = event.target.id;
-    id = id.replace('_image', '');
-    var value = $('#' + id + "_hidden").val();
-
-    var class_name = '.' + value;
-    $(class_name).each(function() {
-        $(this).removeClass('translator_highlighted');
-    });
+   prep_doSearch(language_strings[id].string, "inherit");
 }
-
 
 
 /*##############################################################################
@@ -403,12 +426,12 @@ document.documentElement.innerHTML = html;
  /* Creates the base url for AJAX calls and resource retreival (e.g. images) */
  function get_base_url()
  {   
-     var scripts = document.getElementsByTagName('script'),
-     len = scripts.length,
-     re = script_name+'.js',
-     src, r_url;
+   var scripts = document.getElementsByTagName('script'),
+   len = scripts.length,
+   re = script_name+'.js',
+   src, r_url;
 
-     while (len--) {
+   while (len--) {
       src = scripts[len].src;
       if (src && src.match(re)) {
         r_url = src;

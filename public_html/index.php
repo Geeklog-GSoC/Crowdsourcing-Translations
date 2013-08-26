@@ -38,7 +38,7 @@ require_once './lib-translator.php';
 if ( !in_array( 'crowdtranslator', $_PLUGINS ) ) {
     echo COM_refresh( $_CONF[ 'site_url' ] . '/index.php' );
     exit;
-}
+} //!in_array( 'crowdtranslator', $_PLUGINS )
 $display = '';
 // MAIN
 $display .= COM_siteHeader( 'menu', $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] );
@@ -47,7 +47,8 @@ $display .= "<div class='index'>";
 if ( COM_isAnonUser() ) {
     $display .= get_info_text( $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] );
     $display .= "<h4> To start translating you have to Login </h4>";
-} else {
+} //COM_isAnonUser()
+else {
     $display .= logedin_user_display();
 }
 $display .= '</div>';
