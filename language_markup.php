@@ -179,14 +179,7 @@ function remove_standard( &$line, $key_begin, $key_end, &$array )
         array_push( $array, $tag );
     } //strpos( $line, $key_begin ) !== false && strpos( $line, $key_end ) !== false
 }
-function str_lreplace( $search, $replace, $subject )
-{
-    $pos = strrpos( $subject, $search );
-    if ( $pos !== false ) {
-        $subject = substr_replace( $subject, $replace, $pos, strlen( $search ) );
-    } //$pos !== false
-    return $subject;
-}
+
 
 
 function get_language_array_names( )
@@ -369,4 +362,14 @@ function str_replace_limit( $search, $replace, $subject, &$count, $limit = -1 )
         return $subject;
     }
 }
+
+function str_lreplace( $search, $replace, $subject )
+{
+    $pos = strrpos( $subject, $search );
+    if ( $pos !== false ) {
+        $subject = substr_replace( $subject, $replace, $pos, strlen( $search ) );
+    } //$pos !== false
+    return $subject;
+}
+
 ?>

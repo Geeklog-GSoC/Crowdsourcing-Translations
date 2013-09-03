@@ -726,3 +726,30 @@ function hide_guidelines()
 function escapeRegExp(str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 }
+
+function pack_translation(language){
+
+    var r_url =  r_url = get_base_url();
+    r_url += "packing.php";
+
+     var ajaxRequest = $.ajax({
+        url: r_url,
+        data: {language: language},
+        type: "POST"
+    });
+
+    ajaxRequest.done(function(response, textStatus, jqKHR) {
+        var response_object = JSON.parse(response);
+        if (response_object['error']) {
+            alert("Something went wrong, plese try again.");
+        } else {
+           alert("You translation has been sucessfuly packed, find it @ "+response_object['filename']);
+        }
+    });
+
+    ajaxRequest.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus);
+    });
+
+
+}
