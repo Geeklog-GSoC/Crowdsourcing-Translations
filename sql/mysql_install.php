@@ -106,6 +106,8 @@ CREATE TABLE {$_TABLES['blocked_users']} (
   PRIMARY KEY (user_id)
 ) ENGINE=MyISAM
 ";
+
+
 $DEFVALUES[] = "INSERT INTO {$_TABLES['gems']} (`gem_id`, `title`, `tooltip`, `image`) VALUES ('1', 'First Translation', 'Submited first translation!', 'badge1.png')";
 $DEFVALUES[] = "INSERT INTO {$_TABLES['gems']} (`gem_id`, `title`, `tooltip`, `image`) VALUES ('2', 'Continuous Contribution', 'Adding translations and leveling up', 'badge2.png')";
 $DEFVALUES[] = "INSERT INTO {$_TABLES['gems']} (`gem_id`, `title`, `tooltip`, `image`) VALUES ('3', 'Judgement day', 'Casted first vote!', 'badge3.png')";

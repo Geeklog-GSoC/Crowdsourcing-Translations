@@ -48,9 +48,10 @@ language_maper();
  */
 global $_CROWDTRANSLATOR_DEFAULT;
 $_CROWDTRANSLATOR_DEFAULT                   = array( );
-// This is the default for 'samplesetting1'
+
 $_CROWDTRANSLATOR_DEFAULT[ 'enabled' ]      = true;
 $_CROWDTRANSLATOR_DEFAULT[ 'block_enable' ] = true;
+$_CROWDTRANSLATOR_DEFAULT ['full_install'] = false;
 /**
  * Initialize crowdtranslator plugin configuration
  *

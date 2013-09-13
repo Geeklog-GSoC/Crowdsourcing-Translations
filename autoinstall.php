@@ -45,7 +45,7 @@ function plugin_autoinstall_crowdtranslator( $pi_name )
     $pi_display_name = 'Crowd Translator';
     $pi_admin        = $pi_display_name . ' Admin';
     $info            = array(
-         'pi_name' => $pi_name,
+        'pi_name' => $pi_name,
         'pi_display_name' => $pi_display_name,
         'pi_version' => '1',
         'pi_gl_version' => '2.0.0',
