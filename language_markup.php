@@ -2,35 +2,11 @@
 define( 'XHTML', '" . XHTML . "' );
 require_once $_CONF[ 'path_html' ] . "lib-common.php";
 require_once $_CONF[ 'path_system' ] . 'lib-database.php';
-global $_CONF;
-
-$real                        = array( );
-$real[ 'site_url' ]          = $_CONF[ 'site_url' ];
-$real[ 'commentspeedlimit' ] = $_CONF[ 'commentspeedlimit' ];
-$real[ 'site_name' ]         = $_CONF[ 'site_name' ];
-$real[ 'speedlimit' ]        = $_CONF[ 'speedlimit' ];
-$real[ 'site_admin_url' ]    = $_CONF[ 'site_admin_url' ];
-$real[ 'mysqldump_path' ]    = $_DB_mysqldump_path;
-$real[ 'backup_path' ]       = $_CONF[ 'backup_path' ];
-$real[ 'username' ]          = $_USER[ 'username' ];
-
-$GLOBALS[ 'real_values' ] = $real;
-
-$_CONF[ 'site_url' ]          = "{\$_CONF['site_url']}";
-$_CONF[ 'commentspeedlimit' ] = "{\$_CONF['commentspeedlimit']}";
-$_CONF[ 'site_name' ]         = "{\$_CONF['site_name']}";
-$_CONF[ 'speedlimit' ]        = "{\$_CONF['speedlimit']}";
-$_CONF[ 'site_admin_url' ]    = "{\$_CONF['site_admin_url']}";
-$_DB_mysqldump_path           = "{\$_DB_mysqldump_path}";
-$_CONF[ 'backup_path' ]       = "{\$_CONF['backup_path']}";
-$_USER[ 'username' ]          = "{\$_USER['username']}";
-require_once $_CONF[ 'path' ] . "language/english_utf-8.php";
 
 
 function add_identifier_to_lanugage_file( )
 {
     global $_TABLES, $_CONF;
-    
     
     
     

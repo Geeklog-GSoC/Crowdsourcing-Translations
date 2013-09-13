@@ -64,6 +64,7 @@ $_TABLES[ 'gems' ]          = $_DB_table_prefix . 'gems';
 $_TABLES[ 'awarded_gems' ]  = $_DB_table_prefix . 'awarded_gems';
 $_TABLES[ 'blocked_users' ] = $_DB_table_prefix . 'blocked_users';
 $_TABLES[ 'language_map' ]  = $_DB_table_prefix . 'language_map';
+$_TABLES[ 'remote_submitors' ]  = $_DB_table_prefix . 'remote_submitors';
 // +---------------------------------------------------------------------------+
 // | Geeklog Plugin API Implementation                                         |
 // +---------------------------------------------------------------------------+
@@ -319,7 +320,17 @@ function plugin_autouninstall_crowdtranslator( )
 }
 function plugin_getBlocks_crowdtranslator( $side, $topic = '' )
 {
+    
+
     global $_CROWDTRANSLATOR_DEFAULT, $_CROWDTRANSLATOR_CONF, $_USER, $_TABLES, $_CONF;
+    
+    require_once $_CONF[ 'path_system' ] . 'lib-database.php';
+    $result = DB_query("SELECT `id` FROM {$_TABLES['originals']} WHERE `language_array` = 'LANG01' AND `array_index` = '1'");
+    if( DB_numRows($result) < 1 ){
+    require_once $_CONF[ 'path' ] . 'plugins/crowdtranslator/language_markup.php';
+    add_identifier_to_lanugage_file();
+    }
+     
     $retval = array( );
     if ( $_CROWDTRANSLATOR_CONF[ 'enabled' ] == true && $side == "left" && !COM_isAnonUser() ) {
         $query  = "SELECT `user_id` FROM {$_TABLES['blocked_users']} WHERE `user_id`= {$_USER['uid']}";

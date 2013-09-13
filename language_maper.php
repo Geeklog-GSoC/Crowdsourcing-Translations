@@ -87,7 +87,7 @@ function language_maper( )
             $result     = DB_query( $query );
         } //count( $value->references ) > 0 || count( $value->includes ) > 0
     } //$files_list as $key => $value
-    add_identifier_to_lanugage_file();
+/*add_identifier_to_lanugage_file();
     
     global $_CONF;
     
@@ -99,7 +99,7 @@ function language_maper( )
     $_CONF[ 'site_admin_url' ]    = $real[ 'site_admin_url' ];
     $_DB_mysqldump_path           = $real[ 'mysqldump_path' ];
     $_CONF[ 'backup_path' ]       = $real[ 'backup_path' ];
-    $_USER[ 'username' ]          = $real[ 'username' ];
+    $_USER[ 'username' ]          = $real[ 'username' ];*/
     
     
 }
