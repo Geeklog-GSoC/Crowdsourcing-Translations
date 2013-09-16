@@ -42,7 +42,7 @@ if ( !in_array( 'crowdtranslator', $_PLUGINS ) ) {
 $display = '';
 // MAIN
 $display .= COM_siteHeader( 'menu', $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] );
-$display .= COM_startBlock( "<h4><a href='http://wiki.geeklog.net/index.php?title=Crowdsourcing_Translations'>" . $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] . "</a></h4>" );
+
 $display .= "<div class='index'>";
 if ( COM_isAnonUser() ) {
     $display .= get_info_text( $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] );
@@ -52,12 +52,13 @@ else {
     $display .= logedin_user_display();
 }
 $display .= '</div>';
-$display .= COM_endBlock();
+
 $display .= COM_siteFooter();
 echo $display;
 function get_info_text( $plugin_name )
 {
-    return " ...is a plugin that allows \"crowdsourcing\" the translation of Geeklog, i.e. once installed, it allows users to contribute translations of Geeklog's user interface texts for other languages.
+    global $LANG_CROWDTRANSLATOR_1;
+    return " <h4><a href='http://wiki.geeklog.net/index.php?title=Crowdsourcing_Translations'>" . $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] . "</a></h4> is a plugin that allows \"crowdsourcing\" the translation of Geeklog, i.e. once installed, it allows users to contribute translations of Geeklog's user interface texts for other languages.
     This is a being developed by <a href='http://www.linkedin.com/profile/view?id=188717601' >Benjamin Talic </a> 
     under the mentorship of <a href='http://www.linkedin.com/profile/view?id=11473251'> Dirk Haun </a>
     as a project during the Google <a href='https://www.google-melange.com/gsoc/homepage/google/gsoc2013' >Summer of Code 2013</a>.";

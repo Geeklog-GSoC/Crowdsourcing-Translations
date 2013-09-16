@@ -86,22 +86,7 @@ function language_maper( )
             $query      = "INSERT INTO {$_TABLES['language_map']} (`page_url`, `reference`, `includes`) VALUES ('{$name}', '{$references}', '{$includes}') ";
             $result     = DB_query( $query );
         } //count( $value->references ) > 0 || count( $value->includes ) > 0
-    } //$files_list as $key => $value
-/*add_identifier_to_lanugage_file();
-    
-    global $_CONF;
-    
-    $real                         = $GLOBALS[ 'real_values' ];
-    $_CONF[ 'site_url' ]          = $real[ 'site_url' ];
-    $_CONF[ 'commentspeedlimit' ] = $real[ 'commentspeedlimit' ];
-    $_CONF[ 'site_name' ]         = $real[ 'site_name' ];
-    $_CONF[ 'speedlimit' ]        = $real[ 'speedlimit' ];
-    $_CONF[ 'site_admin_url' ]    = $real[ 'site_admin_url' ];
-    $_DB_mysqldump_path           = $real[ 'mysqldump_path' ];
-    $_CONF[ 'backup_path' ]       = $real[ 'backup_path' ];
-    $_USER[ 'username' ]          = $real[ 'username' ];*/
-    
-    
+    } //$files_list as $key => $value    
 }
 
 /**

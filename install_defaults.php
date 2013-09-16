@@ -47,11 +47,11 @@ language_maper();
  * and not referenced any more once the plugin is installed
  */
 global $_CROWDTRANSLATOR_DEFAULT;
-$_CROWDTRANSLATOR_DEFAULT                   = array( );
+$_CROWDTRANSLATOR_DEFAULT = array( );
 
 $_CROWDTRANSLATOR_DEFAULT[ 'enabled' ]      = true;
 $_CROWDTRANSLATOR_DEFAULT[ 'block_enable' ] = true;
-$_CROWDTRANSLATOR_DEFAULT ['full_install'] = false;
+$_CROWDTRANSLATOR_DEFAULT[ 'full_install' ] = false;
 /**
  * Initialize crowdtranslator plugin configuration
  *

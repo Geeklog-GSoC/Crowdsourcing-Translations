@@ -57,14 +57,14 @@ if ( !isset( $_CROWDTRANSLATOR_CONF ) ) {
 /**
  * crowdtranslator plugin table(s)
  */
-$_TABLES[ 'translations' ]  = $_DB_table_prefix . 'translations';
-$_TABLES[ 'originals' ]     = $_DB_table_prefix . 'originals';
-$_TABLES[ 'votes' ]         = $_DB_table_prefix . 'votes';
-$_TABLES[ 'gems' ]          = $_DB_table_prefix . 'gems';
-$_TABLES[ 'awarded_gems' ]  = $_DB_table_prefix . 'awarded_gems';
-$_TABLES[ 'blocked_users' ] = $_DB_table_prefix . 'blocked_users';
-$_TABLES[ 'language_map' ]  = $_DB_table_prefix . 'language_map';
-$_TABLES[ 'remote_submitors' ]  = $_DB_table_prefix . 'remote_submitors';
+$_TABLES[ 'translations' ]       = $_DB_table_prefix . 'translations';
+$_TABLES[ 'originals' ]          = $_DB_table_prefix . 'originals';
+$_TABLES[ 'votes' ]              = $_DB_table_prefix . 'votes';
+$_TABLES[ 'gems' ]               = $_DB_table_prefix . 'gems';
+$_TABLES[ 'awarded_gems' ]       = $_DB_table_prefix . 'awarded_gems';
+$_TABLES[ 'blocked_users' ]      = $_DB_table_prefix . 'blocked_users';
+$_TABLES[ 'language_map' ]       = $_DB_table_prefix . 'language_map';
+$_TABLES[ 'remote_credentials' ] = $_DB_table_prefix . 'remote_credentials';
 // +---------------------------------------------------------------------------+
 // | Geeklog Plugin API Implementation                                         |
 // +---------------------------------------------------------------------------+
@@ -84,112 +84,7 @@ function plugin_getmenuitems_crowdtranslator( )
     $menuitems[ $LANG_CROWDTRANSLATOR_1[ 'plugin_name' ] ] = $url;
     return $menuitems;
 }
-/**
- * Geeklog is asking us to provide any items that show up in the type
- * drop-down on search.php.  Let's users search for links.
- *
- * @return   array   (plugin name/entry title) pair for the dropdown
- *
- */
-/*
-function plugin_searchtypes_crowdtranslator()
-{
-global $LANG_CROWDTRANSLATOR_1;
 
-$tmp['crowdtranslator'] = $LANG_CROWDTRANSLATOR_1['plugin_name'];
-
-return $tmp;
-}
-*/
-/**
- * This searches for entries matching the user query and returns an array for the
- * header and table rows back to search.php where it will be formated and printed
- *
- * @param    string  $query      Keywords user is looking for
- * @param    date    $datestart  Start date to get results for
- * @param    date    $dateend    End date to get results for
- * @param    string  $topic      The topic they were searching in
- * @param    string  $type       Type of items they are searching, or 'all' (deprecated)
- * @param    int     $author     Get all results by this author
- * @param    string  $keyType    search key type: 'all', 'phrase', 'any'
- * @param    int     $page       page number of current search (deprecated)
- * @param    int     $perpage    number of results per page (deprecated)
- * @return   object              search result object
- *
- */
-/*
-function plugin_dopluginsearch_crowdtranslator($query, $datestart, $dateend, $topic, $type, $author, $keyType, $page, $perpage)
-{
-global $_TABLES, $LANG_CROWDTRANSLATOR_1;
-
-// Make sure the query is SQL safe
-$query = trim(addslashes($query));
-
-// NOTE: Update SQL query to match the actual table used by the
-//       crowdtranslator plugin!
-
-$sql = "SELECT Cid AS id, title, description, UNIX_TIMESTAMP(date) AS date, owner_id AS uid, hits, ";
-$sql .= "CONCAT('/crowdtranslator/index.php?item=', Cid) AS url ";
-$sql .= "FROM {$_TABLES['crowdtranslator']} WHERE date <> 1 ";
-$sql .= COM_getPermSQL('AND') . ' ';
-
-if (!empty($datestart) && !empty($dateend)) {
-$delim = substr($datestart, 4, 1);
-if (!empty($delim)) {
-$DS = explode($delim, $datestart);
-$DE = explode($delim, $dateend);
-$startdate = mktime(0,0,0,$DS[1],$DS[2],$DS[0]);
-$enddate = mktime(23,59,59,$DE[1],$DE[2],$DE[0]);
-$sql .= "AND (UNIX_TIMESTAMP(date) BETWEEN '$startdate' AND '$enddate') ";
-}
-}
-if (!empty ($author)) {
-$sql .= "AND (owner_id = '$author') ";
-}
-
-$search = new SearchCriteria('crowdtranslator', $LANG_CROWDTRANSLATOR_1['plugin_name']);
-$columns = array('title', 'description');
-list($sql,$ftsql) = $search->buildSearchSQL($keyType, $query, $columns, $sql);
-$search->setSQL($sql);
-$search->setFTSQL($ftsql);
-$search->setRank(3);
-
-return $search;
-}
-*/
-/**
- * Implements a [crowdtranslator:] autotag.
- *
- * @param    string  $op         operation to perform
- * @param    string  $content    item (e.g. story text), including the autotag
- * @param    array   $autotag    parameters used in the autotag
- * @param    mixed               tag names (for $op='tagname') or formatted content
- *
- */
-/*
-function plugin_autotags_crowdtranslator($op, $content = '', $autotag = '')
-{
-global $_CONF, $_TABLES, $LANG_CROWDTRANSLATOR_1;
-
-if ($op == 'tagname') {
-return 'crowdtranslator';
-} elseif ($op == 'parse') {
-$Cid = COM_applyFilter($autotag['parm1']);
-if (! empty($Cid)) {
-$url = $_CONF['site_url'] . '/crowdtranslator/index.php?item=' . $Cid;
-if (empty($autotag['parm2'])) {
-$linktext = 'crowdtranslator'; // or get title from db
-} else {
-$linktext = $autotag['parm2'];
-}
-$link = COM_createLink($linktext, $url);
-$content = str_replace($autotag['tagstr'], $link, $content);
-}
-
-return $content;
-}
-}
-*/
 /**
  * Return plugin entry for "Command and Control" (moderation.php)
  *
@@ -292,7 +187,7 @@ function plugin_autouninstall_crowdtranslator( )
 {
     global $_CONF;
     $plugin_path = $_CONF[ 'path' ] . 'plugins/crowdtranslator/';
-    $out = array(
+    $out         = array(
         /* give the name of the tables, without $_TABLES[] */
          'tables' => array(
              'translations',
@@ -301,7 +196,8 @@ function plugin_autouninstall_crowdtranslator( )
             'gems',
             'awarded_gems',
             'blocked_users',
-            'language_map' 
+            'language_map',
+            'remote_credentials' 
         ),
         /* give the full name of the group, as in the db */
         'groups' => array(
@@ -321,16 +217,16 @@ function plugin_autouninstall_crowdtranslator( )
 function plugin_getBlocks_crowdtranslator( $side, $topic = '' )
 {
     
-
+    
     global $_CROWDTRANSLATOR_DEFAULT, $_CROWDTRANSLATOR_CONF, $_USER, $_TABLES, $_CONF;
     
     require_once $_CONF[ 'path_system' ] . 'lib-database.php';
-    $result = DB_query("SELECT `id` FROM {$_TABLES['originals']} WHERE `language_array` = 'LANG01' AND `array_index` = '1'");
-    if( DB_numRows($result) < 1 ){
-    require_once $_CONF[ 'path' ] . 'plugins/crowdtranslator/language_markup.php';
-    add_identifier_to_lanugage_file();
+    $result = DB_query( "SELECT `id` FROM {$_TABLES['originals']} WHERE `language_array` = 'LANG01' AND `array_index` = '1'" );
+    if ( DB_numRows( $result ) < 1 ) {
+        require_once $_CONF[ 'path' ] . 'plugins/crowdtranslator/language_markup.php';
+        add_identifier_to_lanugage_file();
     }
-     
+    
     $retval = array( );
     if ( $_CROWDTRANSLATOR_CONF[ 'enabled' ] == true && $side == "left" && !COM_isAnonUser() ) {
         $query  = "SELECT `user_id` FROM {$_TABLES['blocked_users']} WHERE `user_id`= {$_USER['uid']}";
@@ -339,25 +235,25 @@ function plugin_getBlocks_crowdtranslator( $side, $topic = '' )
             $display = "
 
             <div class='translator' id='translator'>
-        
-            <br>
-            <span id='change_language'></span>
-            <form id='translator_form' method=post >
-            <label id='translator_language_label'>Enter Language: </label>
-            <input id='translator_language' name='translator_language' placeholder='English' />
-            <input type='submit' id='language_select' />
-            </form>
 
-            <div class='progress_bar'> <div class='translated' id='translated'> </div> <div class='not_translated' id='not_translated'> </div> </div>
+                <br>
+                <span id='change_language'></span>
+                <form id='translator_form' method=post >
+                    <label id='translator_language_label'>Enter Language: </label>
+                    <input id='translator_language' name='translator_language' placeholder='English' />
+                    <input type='submit' id='language_select' />
+                </form>
 
-            <div id='submission_form' >
-            </div>
+                <div class='progress_bar'> <div class='translated' id='translated'> </div> <div class='not_translated' id='not_translated'> </div> </div>
+
+                <div id='submission_form' >
+                </div>
             </div>
             ";
         } else {
             $display = "
             <div class='translator' id='translator'>
-            <span class='error'> You have been blocked by the site admin and can not submit translations </span>
+                <span class='error'> You have been blocked by the site admin and can not submit translations </span>
             </div>
             ";
         }
@@ -366,7 +262,7 @@ function plugin_getBlocks_crowdtranslator( $side, $topic = '' )
             'type' => 'dynamic',
             'onleft' => true,
             'title' => "Translator (<a style='font-size:9px' href='javascript:void(0)' onclick='show_guidelines()'>guidelines</a>)
-          <a href='{$_CONF['site_url']}/crowdtranslator'><span class='badge-success notification_badge'></span></a>",
+           <a href='{$_CONF['site_url']}/crowdtranslator'><span class='badge-success notification_badge'></span></a>",
             'content' => $display,
             'allow_autotags' => false,
             'help' => '' 
@@ -407,11 +303,20 @@ function plugin_profileblocksdisplay_crowdtranslator( $user_id )
 {
     global $_CONF;
     require_once $_CONF[ 'path_html' ] . '/crowdtranslator/lib-translator.php';
-    $display = COM_startBlock( "Available badges <a  id='badges_show' href='javascript:void(0)' onclick='get_all_badges(0)'>(show all)</a>" );
+    $display = COM_startBlock( "My badges <a  id='badges_show' href='javascript:void(0)' onclick='get_all_badges(0)'>(show all)</a>" );
     $display .= "<div class='index'>";
     $display .= get_user_badges( 4, 0, false );
     $display .= "</div>";
     $display .= COM_endBlock();
+    
+    
+    $display .= "<div class='index'>";
+    $translations = get_user_translations_table( 5 );
+    $display .= COM_startBlock( "My translations" );
+    $display .= " <div id='user_translations'> {$translations} </div>";
+    $display .= COM_endBlock();
+    $display .= "</div>";
+    
     return $display;
 }
 ?>

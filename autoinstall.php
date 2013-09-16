@@ -45,7 +45,7 @@ function plugin_autoinstall_crowdtranslator( $pi_name )
     $pi_display_name = 'Crowd Translator';
     $pi_admin        = $pi_display_name . ' Admin';
     $info            = array(
-        'pi_name' => $pi_name,
+         'pi_name' => $pi_name,
         'pi_display_name' => $pi_display_name,
         'pi_version' => '1',
         'pi_gl_version' => '2.0.0',
@@ -69,7 +69,8 @@ function plugin_autoinstall_crowdtranslator( $pi_name )
         'gems',
         'awarded_gems',
         'blocked_users',
-        'language_map' 
+        'language_map',
+        'remote_credentials' 
     );
     // Version control and dependencies settings for Geeklog 1.8.0+
     // http://wiki.geeklog.net/index.php/Plugin_Autoinstall#Plugin_dependencies_and_version_control
@@ -112,6 +113,46 @@ function plugin_load_configuration_crowdtranslator( $pi_name )
  */
 function plugin_compatible_with_this_version_crowdtranslator( $pi_name )
 {
+    
+    global $_CONF, $_DB_dbms;
+    
+    // check if we support the DBMS the site is running on
+    $dbFile = $_CONF[ 'path' ] . 'plugins/' . $pi_name . '/sql/' . $_DB_dbms . '_install.php';
+    if ( !file_exists( $dbFile ) ) {
+        return false;
+    }
+    
+    
+    if ( !function_exists( 'COM_refresh' ) ) {
+        return false;
+    }
+    
+    if ( !function_exists( 'DB_query' ) ) {
+        return false;
+    }
+    
+    if ( !function_exists( 'DB_fetchArray' ) ) {
+        return false;
+    }
+    
+    if ( !function_exists( 'DB_numRows' ) ) {
+        return false;
+    }
+    
+    if ( !function_exists( 'SEC_encryptPassword' ) ) {
+        return false;
+    }
+    
+    if ( !function_exists( 'DB_escapeString' ) ) {
+        return false;
+    }
+    
+    if ( !function_exists( 'DB_count' ) ) {
+        return false;
+    }
+    
+    
     return true;
+    
 }
 ?>

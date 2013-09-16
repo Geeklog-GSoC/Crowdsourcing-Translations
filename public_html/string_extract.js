@@ -42,6 +42,12 @@
         translator_form_submit();
     });
 
+    $('#add_peer').submit(function(event) 
+    {
+        event.preventDefault();
+        add_peer();
+    });
+
 });
 
 
@@ -52,10 +58,12 @@
  function add_autocomplete_to_language_input()
  {
     var r_url = get_base_url();
-    r_url += "/get_languages.php";
+    r_url += "lib-translator.php";
 
     var ajaxRequest = $.ajax({
-        url: r_url
+        url: r_url,
+        data: {function: 'get_languages'},
+        type: "POST"
     });
 
     ajaxRequest.done(function(response, textStatus, jqKHR)
@@ -115,7 +123,7 @@ function hide_language_input()
  function get_original_language_values()
  {
     var r_url = get_base_url();
-    r_url += "get_original_language_values.php";
+    r_url += "lib-translator.php";
 
     for(var i=0; i<language_strings.length; i++){
         language_strings[i].string='';
@@ -126,7 +134,7 @@ function hide_language_input()
     var html = $('#container').html();
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: { language: language, url: location.host + location.pathname, html: html  },
+        data: { language: language, url: location.host + location.pathname, html: html, function: 'get_original_language_values'  },
         type: "POST"
     });
 
@@ -137,7 +145,7 @@ function hide_language_input()
         var error_code = response_object['error_code'];
         
         if(error_code >= 1){
-            error_handler();
+            error_handler(response_object['error']);
             return;
         }
         
@@ -168,10 +176,11 @@ function find_by_string( string ){
     });
 }
 
-function error_handler()
+function error_handler(error_message)
 {
     var error = "<div class='error' > There has been an error retrieving the data.";
-    error += "If this persists contact the site admin or <a href='mailto: b.ttalic@gmail.com?Subject=Translator%20Plugin%20Error'>b.ttalic</a></div>";
+    error += "*"+error_message+"*";
+    error += " If this persists contact the site admin or <a href='mailto: b.ttalic@gmail.com?Subject=Translator%20Plugin%20Error'>b.ttalic</a></div>";
     $('#submission_form').append(error);
 }
 
@@ -199,11 +208,11 @@ function show_progress_bar(translated)
  function translator_form_submit()
  {
     var r_url = get_base_url();
-    r_url += "submit_translation.php";
+    r_url += "lib-translator.php";
 
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: $('#translator_form_submission').serialize() + '&taged_strings=' + JSON.stringify(taged_strings) + '&count=' + language_strings.length,
+        data: $('#translator_form_submission').serialize() + '&taged_strings=' + JSON.stringify(taged_strings) + '&count=' + language_strings.length + '&function=submit_translation' ,
         type: "post"
     });
 
@@ -282,11 +291,11 @@ function add_notification(awards)
  function vote(sign, id, object)
  {
     r_url = get_base_url();
-    r_url += "vote.php";
+    r_url += "lib-translator.php";
 
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: {sign: sign, translation_id: language_strings[id].translation_id},
+        data: {sign: sign, translation_id: language_strings[id].translation_id, function: 'vote'},
         type: "POST"
     });
 
@@ -373,7 +382,7 @@ function doSearch(text, value)
         sel.collapse(document.body, 0);
         
         while (window.find(text)) {
-            document.execCommand("backcolor", false, "yellow");            
+            document.execCommand("backcolor", false, value);            
             sel.collapseToEnd();
         }
         document.designMode = "off";
@@ -393,11 +402,11 @@ function doSearch(text, value)
 
 function prep_doSearch( text, value )
 {
-   text = text.replace( /&lttag&gt/g, "" );
-   text = text.replace( /&ltvar&gt/g, "" );
-   text = text.replace(/\s+/g, " ");
-   doSearch( text, value );
-   console.log(text);
+ text = text.replace( /&lttag&gt/g, "" );
+ text = text.replace( /&ltvar&gt/g, "" );
+ text = text.replace(/\s+/g, " ");
+ doSearch( text, value );
+ console.log(text+" "+value);
 }
 
 
@@ -413,8 +422,8 @@ function prep_doSearch( text, value )
  */
  function remove_highlight(id)
  {
-   prep_doSearch(language_strings[id].string, "inherit");
-}
+     prep_doSearch(language_strings[id].string, "inherit");
+ }
 
 
 /*##############################################################################
@@ -426,12 +435,12 @@ function prep_doSearch( text, value )
  /* Creates the base url for AJAX calls and resource retreival (e.g. images) */
  function get_base_url()
  {   
-   var scripts = document.getElementsByTagName('script'),
-   len = scripts.length,
-   re = script_name+'.js',
-   src, r_url;
+     var scripts = document.getElementsByTagName('script'),
+     len = scripts.length,
+     re = script_name+'.js',
+     src, r_url;
 
-   while (len--) {
+     while (len--) {
       src = scripts[len].src;
       if (src && src.match(re)) {
         r_url = src;
@@ -534,7 +543,7 @@ function hide_guidelines()
  * @param int admin indicading if admin mode or user mode
  * @param string order_by indicating the ordering of the table
  */
- function show_more_translations(limit, start, admin, order_by)
+ function show_more_translations(limit, start, admin, order_by, remote)
  {
 
     var limit_input = $('#limit').val();
@@ -547,6 +556,8 @@ function hide_guidelines()
     if (limit == 0)
         limit = null;
 
+    if( !remote )
+        remote = false;
 
     r_url = get_base_url();
     r_url += "lib-translator.php";
@@ -557,7 +568,7 @@ function hide_guidelines()
 
     var ajaxRequest = $.ajax({
         url: r_url,
-        data: {function: function_name, limit: limit, start: start, order_by: order_by},
+        data: {function: function_name, limit: limit, start: start, order_by: order_by, remote: remote},
         type: "POST"
     });
 
@@ -659,7 +670,8 @@ function hide_guidelines()
 
         var admin = parseInt(params[2]);
         var order_by = params[3];
-        order_by = order_by.replace(')', '');
+        order_by = order_by.replace(')', '').replace(/\"/g,'');
+        console.log(order_by);
         show_more_translations(limit, -1, admin, order_by);
     }
 
@@ -732,7 +744,7 @@ function pack_translation(language){
     var r_url =  r_url = get_base_url();
     r_url += "packing.php";
 
-     var ajaxRequest = $.ajax({
+    var ajaxRequest = $.ajax({
         url: r_url,
         data: {language: language},
         type: "POST"
@@ -743,13 +755,74 @@ function pack_translation(language){
         if (response_object['error']) {
             alert("Something went wrong, plese try again.");
         } else {
-           alert("You translation has been sucessfuly packed, find it @ "+response_object['filename']);
-        }
-    });
+         alert("You translation has been sucessfuly packed, find it @ "+response_object['filename']);
+     }
+ });
 
     ajaxRequest.fail(function(jqXHR, textStatus, errorThrown) {
         console.log(textStatus);
     });
 
 
+}
+
+
+function add_peer()
+{
+ var r_url =  r_url = get_base_url();
+ r_url += "lib-translator.php";
+
+ var ajaxRequest = $.ajax({
+    url: r_url,
+    data: $('#add_peer').serialize()+ '&function=add_peer',
+    type: "POST"
+});
+
+ ajaxRequest.done(function(response, textStatus, jqKHR) {
+    var response_object = JSON.parse(response);
+    if (response_object['error']) {
+        $('dt#errors').html(response_object['error']);
+        console.log(response_object['error']);
+    } else {
+        $('dt#errors').html('');
+        alert("You have sucessfuly created a new peer account, username: "+response_object['site_name']);
+    }
+});
+
+ ajaxRequest.fail(function(jqXHR, textStatus, errorThrown) {
+    $('dt #errors').html(textStatus);
+});
+}
+
+function remove_peer(peer_name)
+{
+
+    var confirmation = confirm("Are you sure you want to remove this peer ? Removing a peer will also delete all of his translations");
+
+    if (!confirmation) {
+        return;
+    }
+
+    var r_url =  r_url = get_base_url();
+    r_url += "lib-translator.php";
+
+    var ajaxRequest = $.ajax({
+        url: r_url,
+        data: {peer_name: peer_name, function: 'remove_peer'},
+        type: "POST"
+    });
+
+    ajaxRequest.done(function(response, textStatus, jqKHR) {
+        var response_object = JSON.parse(response);
+        if (response_object['error']) {
+            alert(response_object['error'])
+        } else {
+            $('li#'+peer_name).remove();
+            alert("You have sucessfuly removed peer account "+response_object['site_name']);
+        }
+    });
+
+    ajaxRequest.fail(function(jqXHR, textStatus, errorThrown) {
+        $('dt #errors').html(textStatus);
+    });   
 }
