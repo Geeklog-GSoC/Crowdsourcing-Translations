@@ -2,6 +2,7 @@
 define( 'XHTML', '" . XHTML . "' );
 require_once $_CONF[ 'path_html' ] . "lib-common.php";
 require_once $_CONF[ 'path_system' ] . 'lib-database.php';
+include_once $_CONF[ 'path' ] . 'plugins/crowdtranslator/custom_string_replace.php';
 
 
 function add_identifier_to_lanugage_file( )
@@ -157,7 +158,11 @@ function remove_standard( &$line, $key_begin, $key_end, &$array )
 }
 
 
-
+/**
+* Gets the list of array names used by Geeklog, it connects to the current language file and parses
+* it as a string
+* @return array the array of language array names
+*/
 function get_language_array_names( )
 {
     global $_CONF;
@@ -183,169 +188,5 @@ function get_language_array_names( )
     return $language_array_names;
 }
 
-
-
-
-
-//Following code is taken from stackoverflow, provided by user bfrohs - http://stackoverflow.com/users/526741/bfrohs
-/**
- * Checks if $string is a valid integer. Integers provided as strings (e.g. '2' vs 2)
- * are also supported.
- * @param mixed $string
- * @return bool Returns boolean TRUE if string is a valid integer, or FALSE if it is not 
- */
-function valid_integer( $string )
-{
-    // 1. Cast as string (in case integer is provided)
-    // 1. Convert the string to an integer and back to a string
-    // 2. Check if identical (note: 'identical', NOT just 'equal')
-    // Note: TRUE, FALSE, and NULL $string values all return FALSE
-    $string = strval( $string );
-    return ( $string === strval( intval( $string ) ) );
-}
-/**
- * Replace $limit occurences of the search string with the replacement string
- * @param mixed $search The value being searched for, otherwise known as the needle. An
- * array may be used to designate multiple needles.
- * @param mixed $replace The replacement value that replaces found search values. An
- * array may be used to designate multiple replacements.
- * @param mixed $subject The string or array being searched and replaced on, otherwise
- * known as the haystack. If subject is an array, then the search and replace is
- * performed with every entry of subject, and the return value is an array as well. 
- * @param string $count If passed, this will be set to the number of replacements
- * performed.
- * @param int $limit The maximum possible replacements for each pattern in each subject
- * string. Defaults to -1 (no limit).
- * @return string This function returns a string with the replaced values.
- */
-function str_replace_limit( $search, $replace, $subject, &$count, $limit = -1 )
-{
-    // Set some defaults
-    $count = 0;
-    // Invalid $limit provided. Throw a warning.
-    if ( !valid_integer( $limit ) ) {
-        $backtrace = debug_backtrace();
-        trigger_error( 'Invalid $limit `' . $limit . '` provided to ' . __function__ . '() in ' . '`' . $backtrace[ 0 ][ 'file' ] . '` on line ' . $backtrace[ 0 ][ 'line' ] . '. Expecting an ' . 'integer', E_USER_WARNING );
-        return $subject;
-    } //!valid_integer( $limit )
-    // Invalid $limit provided. Throw a warning.
-    if ( $limit < -1 ) {
-        $backtrace = debug_backtrace();
-        trigger_error( 'Invalid $limit `' . $limit . '` provided to ' . __function__ . '() in ' . '`' . $backtrace[ 0 ][ 'file' ] . '` on line ' . $backtrace[ 0 ][ 'line' ] . '. Expecting -1 or ' . 'a positive integer', E_USER_WARNING );
-        return $subject;
-    } //$limit < -1
-    // No replacements necessary. Throw a notice as this was most likely not the intended
-    // use. And, if it was (e.g. part of a loop, setting $limit dynamically), it can be
-    // worked around by simply checking to see if $limit===0, and if it does, skip the
-    // function call (and set $count to 0, if applicable).
-    if ( $limit === 0 ) {
-        $backtrace = debug_backtrace();
-        trigger_error( 'Invalid $limit `' . $limit . '` provided to ' . __function__ . '() in ' . '`' . $backtrace[ 0 ][ 'file' ] . '` on line ' . $backtrace[ 0 ][ 'line' ] . '. Expecting -1 or ' . 'a positive integer', E_USER_NOTICE );
-        return $subject;
-    } //$limit === 0
-    // Use str_replace() whenever possible (for performance reasons)
-    if ( $limit === -1 ) {
-        return str_replace( $search, $replace, $subject, $count );
-    } //$limit === -1
-    if ( is_array( $subject ) ) {
-        // Loop through $subject values and call this function for each one.
-        foreach ( $subject as $key => $this_subject ) {
-            // Skip values that are arrays (to match str_replace()).
-            if ( !is_array( $this_subject ) ) {
-                // Call this function again for
-                $this_function   = __FUNCTION__;
-                $subject[ $key ] = $this_function( $search, $replace, $this_subject, $this_count, $limit );
-                // Adjust $count
-                $count += $this_count;
-                // Adjust $limit, if not -1
-                if ( $limit != -1 ) {
-                    $limit -= $this_count;
-                } //$limit != -1
-                // Reached $limit, return $subject
-                if ( $limit === 0 ) {
-                    return $subject;
-                } //$limit === 0
-            } //!is_array( $this_subject )
-        } //$subject as $key => $this_subject
-        return $subject;
-    } //is_array( $subject )
-    elseif ( is_array( $search ) ) {
-        // Only treat $replace as an array if $search is also an array (to match str_replace())
-        // Clear keys of $search (to match str_replace()).
-        $search = array_values( $search );
-        // Clear keys of $replace, if applicable (to match str_replace()).
-        if ( is_array( $replace ) ) {
-            $replace = array_values( $replace );
-        } //is_array( $replace )
-        // Loop through $search array.
-        foreach ( $search as $key => $this_search ) {
-            // Don't support multi-dimensional arrays (to match str_replace()).
-            $this_search = strval( $this_search );
-            // If $replace is an array, use the value of $replace[$key] as the replacement. If
-            // $replace[$key] doesn't exist, just an empty string (to match str_replace()).
-            if ( is_array( $replace ) ) {
-                if ( array_key_exists( $key, $replace ) ) {
-                    $this_replace = strval( $replace[ $key ] );
-                } //array_key_exists( $key, $replace )
-                else {
-                    $this_replace = '';
-                }
-            } //is_array( $replace )
-            else {
-                $this_replace = strval( $replace );
-            }
-            // Call this function again for
-            $this_function = __FUNCTION__;
-            $subject       = $this_function( $this_search, $this_replace, $subject, $this_count, $limit );
-            // Adjust $count
-            $count += $this_count;
-            // Adjust $limit, if not -1
-            if ( $limit != -1 ) {
-                $limit -= $this_count;
-            } //$limit != -1
-            // Reached $limit, return $subject
-            if ( $limit === 0 ) {
-                return $subject;
-            } //$limit === 0
-        } //$search as $key => $this_search
-        return $subject;
-    } //is_array( $search )
-    else {
-        $search  = strval( $search );
-        $replace = strval( $replace );
-        // Get position of first $search
-        $pos     = strpos( $subject, $search );
-        // Return $subject if $search cannot be found
-        if ( $pos === false ) {
-            return $subject;
-        } //$pos === false
-        // Get length of $search, to make proper replacement later on
-        $search_len = strlen( $search );
-        // Loop until $search can no longer be found, or $limit is reached
-        for ( $i = 0; ( ( $i < $limit ) || ( $limit === -1 ) ); $i++ ) {
-            // Replace 
-            $subject = substr_replace( $subject, $replace, $pos, $search_len );
-            // Increase $count
-            $count++;
-            // Get location of next $search
-            $pos = strpos( $subject, $search );
-            // Break out of loop if $needle
-            if ( $pos === false ) {
-                break;
-            } //$pos === false
-        } //$i = 0; ( ( $i < $limit ) || ( $limit === -1 ) ); $i++
-        // Return new $subject
-        return $subject;
-    }
-}
-
-function str_lreplace( $search, $replace, $subject )
-{
-    $pos = strrpos( $subject, $search );
-    if ( $pos !== false ) {
-        $subject = substr_replace( $subject, $replace, $pos, strlen( $search ) );
-    } //$pos !== false
-    return $subject;
-}
 
 ?>
