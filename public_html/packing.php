@@ -1,5 +1,39 @@
 <?php
 
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | CrowdTranslator Plugin 0.1                                                |
+// +---------------------------------------------------------------------------+
+// | index.php                                                                 |
+// |                                                                           |
+// | Public plugin page                                                        |
+// +---------------------------------------------------------------------------+
+// | Copyright (C) 2013 by the following authors:                              |
+// |                                                                           |
+// | Authors: Benjamin Talic - b DOT ttalic AT gmail DOT com                   |
+// +---------------------------------------------------------------------------+
+// | Created with the Geeklog Plugin Toolkit.                                  |
+// +---------------------------------------------------------------------------+
+// |                                                                           |
+// | This program is free software; you can redistribute it and/or             |
+// | modify it under the terms of the GNU General Public License               |
+// | as published by the Free Software Foundation; either version 2            |
+// | of the License, or (at your option) any later version.                    |
+// |                                                                           |
+// | This program is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+// | GNU General Public License for more details.                              |
+// |                                                                           |
+// | You should have received a copy of the GNU General Public License         |
+// | along with this program; if not, write to the Free Software Foundation,   |
+// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+/**
+ * @package CrowdTranslator
+ */
+
 if ( !isset( $_POST[ 'language' ] ) || empty( $_POST[ 'language' ] ) ) {
     $error = array(
          'error' => 'Language not set' 
@@ -59,10 +93,7 @@ $file_content  = "<?php
 # {$language_name}.php
 #
 # This is the {$language_name} language file for Geeklog
-# Special thanks to Mischa Polivanov for his work on this project
-#
-# Copyright (C) 2000 Jason Whittenburg
-# jwhitten AT securitygeeks DOT com
+# This file was getenrated with CrowdTranslator plugin
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -136,6 +167,14 @@ $response = array(
 );
 echo json_encode( $response );
 
+/**
+* Will format the array output for the new language file, the output is generated line by line - each line is one array element
+* @param string file_content the previously generated content of the file
+* @param array current_array The currently processed array
+* @param string spacing The indentation used
+* @param array quote_type The type of quotes (' or ") used for the current line
+* @param array quote_type_count counter keeping track on which quote should be used
+*/
 function print_array( &$file_content, $current_array, $spacing, $quote_type, &$quote_type_count )
 {
     global $_CONF, $real, $replace;
@@ -190,6 +229,15 @@ function print_array( &$file_content, $current_array, $spacing, $quote_type, &$q
     } //$current_array as $key2 => $value2
 }
 
+/**
+* Will format the sub array output for the new language file, the output is generated line by line - each line is one array element
+* @param string file_content the previously generated content of the file
+* @param array value2 The currently processed sub array
+* @param array key2 The currently processed sub array name/index
+* @param string spacing The indentation used
+* @param array quote_type The type of quotes (' or ") used for the current line
+* @param array quote_type_count counter keeping track on which quote should be used
+*/
 function print_sub_array( &$file_content, $value2, $key2, $spacing, $quote_type, &$quote_type_count )
 {
     
@@ -228,6 +276,12 @@ function print_sub_array( &$file_content, $value2, $key2, $spacing, $quote_type,
     
 }
 
+/**
+* Gets the list of array names used by Geeklog, it connects to the current language file and parses
+* it as a string
+* @param array quote_type This will be populated by quote types used on certain lines
+* @return array the array of language array names
+*/
 function get_language_array_names( &$quote_type )
 {
     global $_CONF;
@@ -268,6 +322,13 @@ function get_language_array_names( &$quote_type )
     return $language_array_names;
 }
 
+/**
+* In order to prevent escaping phrase caracters (e.g. Don't => Don\'t) this function
+* will do custom escaping
+* @param string this_quote_type The quote type used for the current line (s for ' or d for ")
+* @param string value The actual string we are escaping
+* @return string the escaped string
+*/
 function addslashesPacking( $this_quote_type, $value )
 {
     if ( $this_quote_type == 's' ) {
@@ -277,7 +338,14 @@ function addslashesPacking( $this_quote_type, $value )
     }
 }
 
-
+/**
+* Checks if current LANG element is translated (inside the database) if it is it will be formated and returned
+* @param array current_array currently processed array
+* @param string array_key the current array key
+* @param string value2 the curretn phrase
+* @param string array_subindex if set the index of the sub-array default value = -1
+* @return string eaither value2 or the translation found in the database
+*/
 function getPhraseFromDB( $current_array, $array_key, $value2, $array_subindex = -1 )
 {
     global $language_name, $array, $index, $_TABLES, $real, $replace;

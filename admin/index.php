@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 
 /**
- * @package CrowdTranslator
+ * @package crowdtranslator
  */
 
 require_once '../../../lib-common.php';

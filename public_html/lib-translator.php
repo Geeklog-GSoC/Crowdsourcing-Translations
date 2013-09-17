@@ -1,4 +1,40 @@
 <?php
+
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | CrowdTranslator Plugin 0.1                                                |
+// +---------------------------------------------------------------------------+
+// | index.php                                                                 |
+// |                                                                           |
+// | Public plugin page                                                        |
+// +---------------------------------------------------------------------------+
+// | Copyright (C) 2013 by the following authors:                              |
+// |                                                                           |
+// | Authors: Benjamin Talic - b DOT ttalic AT gmail DOT com                   |
+// +---------------------------------------------------------------------------+
+// | Created with the Geeklog Plugin Toolkit.                                  |
+// +---------------------------------------------------------------------------+
+// |                                                                           |
+// | This program is free software; you can redistribute it and/or             |
+// | modify it under the terms of the GNU General Public License               |
+// | as published by the Free Software Foundation; either version 2            |
+// | of the License, or (at your option) any later version.                    |
+// |                                                                           |
+// | This program is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+// | GNU General Public License for more details.                              |
+// |                                                                           |
+// | You should have received a copy of the GNU General Public License         |
+// | along with this program; if not, write to the Free Software Foundation,   |
+// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+/**
+ * @package CrowdTranslator
+ */
+
+
 /* when using AJAX the function is specified, this is wherre it is retrieved
  */
 $function = '';
@@ -17,6 +53,7 @@ if ( strpos( strtolower( $_SERVER[ 'PHP_SELF' ] ), 'lib-translator.php' ) !== fa
     exit;
 } //strpos( strtolower( $_SERVER[ 'PHP_SELF' ] ), 'lib-translator.php' ) !== false && $function == ''
 require_once $_CONF[ 'path_system' ] . 'lib-database.php';
+include_once $_CONF[ 'path' ] . 'plugins/crowdtranslator/custom_string_replace.php';
 /* If the lib is used by AJAX this is where its decided
 which function will be called
 */
@@ -84,6 +121,7 @@ function delete_translation( $id = null )
  *     Get the sum of all aprovals accross translations for current user
  * @return the sum of all approvals for a single user
  */
+
 function get_total_approval_for_user( )
 {
     global $_USER, $_TABLES;
@@ -93,6 +131,7 @@ function get_total_approval_for_user( )
     $sum    = $sum[ 'sum' ];
     return $sum > 0 ? $sum : "0";
 }
+
 /**
  * @param integer user_id If set to null the function will return all languages being translated
  * @return The HTML of the progress bars for each retrieved language
@@ -117,6 +156,7 @@ function get_user_translated_languages( $user_id = null )
     } //$row = DB_fetchArray( $result )
     return $display;
 }
+
 /**
  *  Calculates the percentage of translation for a language
  *     @param string language The for which the percentage is calculated
@@ -137,6 +177,7 @@ function get_translation_percent( $language = null )
     $translated                    = ( $number_of_translated_elements / $number_of_original_elements ) * 100;
     return (float) $translated;
 }
+
 /**
  * Retrieves badges accumulated in admin mode retrieves all available badges
  * @param int limit The number of badges to be displayed
@@ -195,6 +236,7 @@ function get_user_badges( $limit = -1, $admin = 0, $show_not_awarded = true )
     } //$show_not_awarded == true
     return $display;
 }
+
 /**
  * When displaying badges this is where the actuall HTML code is assembled
  * @param object gem The badge data retrieved from database
@@ -209,6 +251,7 @@ function display_badge( $gem, $count, $lvl = '', $disabled = '' )
         $display .= "</br>";
     return $display;
 }
+
 /**
  * Get the number of votes casted by current user
  * @return returns number of votes casted by current user
@@ -221,6 +264,7 @@ function get_user_votes( )
     $result = DB_fetchArray( $result );
     return $result[ 'count' ];
 }
+
 /**
  * Returns number of translations submited by single user or in total depending on rge $admin param
  * @param int admin Indicates if the function will return the number of votes submited by one user or in total
@@ -261,6 +305,7 @@ function get_votes_count( )
     $result = DB_fetchArray( $result );
     return $result[ 'count' ];
 }
+
 /**
  * Returns translation with the most upvotes
  * @param int criterion if set to zero returns the bigest number of upvotes for translations by current user, otherwise the bigest number of upvotes
@@ -279,6 +324,7 @@ function get_most_upvotes( $criterion )
         $result = 0;
     return $result;
 }
+
 /**
  * Returns number of users translating
  * @return int number of users using the plugin
@@ -291,6 +337,7 @@ function get_users_translating( )
     $result = DB_fetchArray( $result );
     return $result[ 'count' ];
 }
+
 /**
  * Returns number of languages being translated
  * @return int number of distinct language names in the database
@@ -303,6 +350,7 @@ function get_languages_translated_count( )
     $result = DB_fetchArray( $result );
     return $result[ 'count' ];
 }
+
 /**
  * Returns number of translations with negative approval count
  * @return int number of translations with negative aproval_count
@@ -315,6 +363,7 @@ function get_translations_with_negative_vote_count( )
     $result = DB_fetchArray( $result );
     return $result[ 'count' ];
 }
+
 /**
  * Returns HTML code for the progress bars of languages being translated
  * @return string HTML code of progress bars for languages being translated
@@ -359,6 +408,7 @@ function get_translations_options( &$limit, &$start, &$order_by )
     } //isset( $_REQUEST[ 'order_by' ] ) && !empty( $_REQUEST[ 'order_by' ] )
     
 }
+
 /**
  * The html code of the table header for the table displaying translations
  * @param int admin if set to 1 the table will have a username header
@@ -382,6 +432,7 @@ function get_translations_table_headers( $admin, $limit )
             <th> </th> </tr> ";
     return $display;
 }
+
 /**
  * Assembles last row of the translations table ncludes the click for Previous show, Next show and input box for limit
  * @param int previous indicates the first translation to be shown
@@ -408,6 +459,7 @@ function get_translations_table_finalize( $previous, $next, $admin, $limit, $ord
     }
     return $display;
 }
+
 /**
  * Assembles query used for the translations table
  * @param int criterions If 1 we are using admin mode where the translators user name has to be shown
@@ -450,6 +502,8 @@ function get_translations_table_query( $criterion, $start, $order_by, $limit )
     }
     return $query;
 }
+
+
 /**
  * Makes the translations table for admins
  * @see get_user_translations_table for translations table in user mode
@@ -495,6 +549,8 @@ function get_translations_table( $limit = 5, $start = -1, $order_by = '`posted`,
     $display .= " </tbody></table>";
     return $display;
 }
+
+
 /**
  * Makes the translations table for users
  * @see get_translations_table_table for translations table in admin mode
@@ -531,6 +587,8 @@ function get_user_translations_table( $limit = 5, $start = -1, $order_by = '`pos
     $display .= "</tbody></table>";
     return $display;
 }
+
+
 /**
  * Puts specified user on block list, deletes his translations and votes for those translations and awarded gems 
  * @param int user_id ID of user to be blocked
@@ -552,6 +610,8 @@ function block_user( $user_id = null )
         } //$result == true
     } //$user_id != null
 }
+
+
 /**
  * Assebles list of blocked users
  * @return string HTML code of a table containing usernames and blocking times of blocked users
@@ -581,6 +641,8 @@ function get_blocked_users_table( )
     }
     return $display;
 }
+
+
 /**
  * Removes specified user from block list
  * @param int user_id ID of user to be un-blocked
@@ -596,6 +658,11 @@ function remove_block( $user_id = null )
         DB_query( $query );
     } //$user_id != null
 }
+
+/**
+* Check if post variable is set and non=empty
+* @return boolean True if the POST variable specified is set and non-empty
+*/
 function check_post_variable( $post_var )
 {
     $error = new stdClass();
@@ -661,6 +728,8 @@ function awards( )
     } //$gems as $index => $gem_id
     return $counter;
 }
+
+
 /**
  * @param int translation_count number of translation the user has submited
  * @param int gem_id the id under which the award has been given
@@ -683,6 +752,8 @@ function award_nth_translation( $translation_count, $gem_id )
         return false;
     }
 }
+
+
 /**
  * Check if award with id gem_id is given to user
  * @param int gem_id the id under which the award has been given
@@ -699,6 +770,8 @@ function check_if_awarded( $gem_id )
         return true;
     return false;
 }
+
+
 /**
  * The award is given to the user by saving it to the awarded_gems table
  * @param int gem_id the id under which the award has been given
@@ -774,8 +847,10 @@ function award_mark( $gem_id, &$award_lvl, &$award_mark )
     $award_mark = ( 3 * ( $award_lvl * $award_lvl ) - $award_lvl ) / 2;
 }
 
-
-
+/**
+* Add new credentials to the database, allowing a new site to submit remote translations
+* @return string JSON encoded strying with failiure or success message
+*/
 function add_peer( )
 {
     global $_TABLES, $_CONF;
@@ -802,7 +877,10 @@ function add_peer( )
     
     return json_encode( $response );
 }
-
+/**
+* Removes remote submision credentials from the database as well as translations submited by the remote site
+* @return string JSON encoded strying with failiure or success message
+*/
 function remove_peer( )
 {
     global $_TABLES;
@@ -824,9 +902,9 @@ function remove_peer( )
     return json_encode( $response );
 }
 
-/* the script will return all available languages for translation
+/** the script will return all available languages for translation
  *it will make a list of both languages from the language folder
- and previously user created languages
+ *and previously user created languages
  */
 function get_languages( )
 {
@@ -844,9 +922,10 @@ function get_languages( )
     echo json_encode( $lang );
 }
 
-/*
+/**
  * Saves the user vote or updates existing vote
  * notifies the JS if the page has to be reloaded-this happens if a translation is deleted
+ * @return string JSON encoded strying with failiure or success message
  */
 function vote( )
 {
@@ -892,11 +971,12 @@ function vote( )
 
 
 
-/*
+/**
  * Script will take extracted array data find the original array values from the database
  * where all variables and html tags have been replaced with <tag> and create the 
  * HTML of the translation form
  * before it is saved to the database
+ * @return string JSON encoded data holding the translation form, language strings, tagged strings
  */
 function get_original_language_values( )
 {
@@ -984,6 +1064,11 @@ function add_form_element( &$form, $count, $value, $base_url, $disabled_up, $dis
     }
     $form .= $template;
 }
+
+/**
+* Returns current page url
+* @return string Current page url
+*/
 function get_page_url( )
 {
     global $_POST;
@@ -993,6 +1078,14 @@ function get_page_url( )
     $page_url = basename( $page_url );
     return $page_url;
 }
+
+/**
+* Generates a list of LANG array elements which are used in pages included in the current page
+* @see documentation on language mapping and how the plugin works
+* @param array &reference the array of previously found LANG references
+* @param array included the array of previously processed included url's
+* @param array includes the array of url's to be processed
+*/
 function get_language_array_references_from_included( &$reference, $included, &$includes )
 {
     global $_TABLES;
@@ -1030,6 +1123,12 @@ function get_language_array_references_from_included( &$reference, $included, &$
             get_language_array_references_from_included( $reference, $includes, $included );
     }
 }
+
+/**
+* Returns the array name from the metadata string
+* @param string string metadata string
+* @return string array name
+*/
 function get_array( $string )
 {
     $regexp = "/\w{1,}\[/";
@@ -1038,6 +1137,12 @@ function get_array( $string )
     $array = substr( $array, 0, strlen( $array ) - 1 );
     return $array;
 }
+
+/**
+* Returns the array index from the metadata string
+* @param string string metadata string
+* @return string array index
+*/
 function get_index( $string )
 {
     $regexp = "/\['*\w{1,}'*\]/";
@@ -1050,6 +1155,13 @@ function get_index( $string )
     return $index;
 }
 
+/**
+* Returns the array sub-index from the metadata string
+* @param string array array name from the metadata string
+* @param string index array index from the metadata string
+* @param string string metadata string
+* @return string array sub-index
+*/
 function get_subindex( $array, $index, $string )
 {
     $subindex = substr( $string, strlen( "{$array}[{$index}]" ) );
@@ -1069,7 +1181,10 @@ function get_subindex( $array, $index, $string )
     
 }
 
-
+/**
+* Generates an array of objects holding translations and their metadata
+* @return array Objects holding translations and their metadata
+*/
 function get_language_array( )
 {
     global $_TABLES;
@@ -1105,7 +1220,13 @@ function get_language_array( )
     return $language_array;
 }
 
-
+/**
+* The generated language array offten has more references than shown in the actual page rendering
+* this function will remove strings not rendered on the page
+* @see get_language_array( )
+* @param string html HTML of the currrent page
+* @param array language_array The array of references 
+*/
 function purge_language_array( $html, &$language_array )
 {
     global $_TABLES;
@@ -1170,11 +1291,11 @@ function purge_language_array( $html, &$language_array )
     return $taged_strings;
 }
 
-
-
-
-
-
+/**
+* After translations are submited an AJAX call is issued to this functions, it will process the submited translations
+* @return string json encoded string holding data on number of valid and invalid translations, number of given awards and the percent of translation
+* for the current language
+*/
 function submit_translation( )
 {
     global $_USER, $_TABLES, $_CONF;
@@ -1283,178 +1404,5 @@ VALUES ('', '{$input->language_full_name}' ,
         } //$result == true
     } //$process_q as $key => $input
 }
-
-
-
-
-
-
-
-
-
-
-
-//Following code is taken from stackoverflow, provided by user bfrohs - http://stackoverflow.com/users/526741/bfrohs
-/**
- * Checks if $string is a valid integer. Integers provided as strings (e.g. '2' vs 2)
- * are also supported.
- * @param mixed $string
- * @return bool Returns boolean TRUE if string is a valid integer, or FALSE if it is not 
- */
-function valid_integer( $string )
-{
-    // 1. Cast as string (in case integer is provided)
-    // 1. Convert the string to an integer and back to a string
-    // 2. Check if identical (note: 'identical', NOT just 'equal')
-    // Note: TRUE, FALSE, and NULL $string values all return FALSE
-    $string = strval( $string );
-    return ( $string === strval( intval( $string ) ) );
-}
-/**
- * Replace $limit occurences of the search string with the replacement string
- * @param mixed $search The value being searched for, otherwise known as the needle. An
- * array may be used to designate multiple needles.
- * @param mixed $replace The replacement value that replaces found search values. An
- * array may be used to designate multiple replacements.
- * @param mixed $subject The string or array being searched and replaced on, otherwise
- * known as the haystack. If subject is an array, then the search and replace is
- * performed with every entry of subject, and the return value is an array as well. 
- * @param string $count If passed, this will be set to the number of replacements
- * performed.
- * @param int $limit The maximum possible replacements for each pattern in each subject
- * string. Defaults to -1 (no limit).
- * @return string This function returns a string with the replaced values.
- */
-function str_replace_limit( $search, $replace, $subject, &$count, $limit = -1 )
-{
-    // Set some defaults
-    $count = 0;
-    // Invalid $limit provided. Throw a warning.
-    if ( !valid_integer( $limit ) ) {
-        $backtrace = debug_backtrace();
-        trigger_error( 'Invalid $limit `' . $limit . '` provided to ' . __function__ . '() in ' . '`' . $backtrace[ 0 ][ 'file' ] . '` on line ' . $backtrace[ 0 ][ 'line' ] . '. Expecting an ' . 'integer', E_USER_WARNING );
-        return $subject;
-    } //!valid_integer( $limit )
-    // Invalid $limit provided. Throw a warning.
-    if ( $limit < -1 ) {
-        $backtrace = debug_backtrace();
-        trigger_error( 'Invalid $limit `' . $limit . '` provided to ' . __function__ . '() in ' . '`' . $backtrace[ 0 ][ 'file' ] . '` on line ' . $backtrace[ 0 ][ 'line' ] . '. Expecting -1 or ' . 'a positive integer', E_USER_WARNING );
-        return $subject;
-    } //$limit < -1
-    // No replacements necessary. Throw a notice as this was most likely not the intended
-    // use. And, if it was (e.g. part of a loop, setting $limit dynamically), it can be
-    // worked around by simply checking to see if $limit===0, and if it does, skip the
-    // function call (and set $count to 0, if applicable).
-    if ( $limit === 0 ) {
-        $backtrace = debug_backtrace();
-        trigger_error( 'Invalid $limit `' . $limit . '` provided to ' . __function__ . '() in ' . '`' . $backtrace[ 0 ][ 'file' ] . '` on line ' . $backtrace[ 0 ][ 'line' ] . '. Expecting -1 or ' . 'a positive integer', E_USER_NOTICE );
-        return $subject;
-    } //$limit === 0
-    // Use str_replace() whenever possible (for performance reasons)
-    if ( $limit === -1 ) {
-        return str_replace( $search, $replace, $subject, $count );
-    } //$limit === -1
-    if ( is_array( $subject ) ) {
-        // Loop through $subject values and call this function for each one.
-        foreach ( $subject as $key => $this_subject ) {
-            // Skip values that are arrays (to match str_replace()).
-            if ( !is_array( $this_subject ) ) {
-                // Call this function again for
-                $this_function   = __FUNCTION__;
-                $subject[ $key ] = $this_function( $search, $replace, $this_subject, $this_count, $limit );
-                // Adjust $count
-                $count += $this_count;
-                // Adjust $limit, if not -1
-                if ( $limit != -1 ) {
-                    $limit -= $this_count;
-                } //$limit != -1
-                // Reached $limit, return $subject
-                if ( $limit === 0 ) {
-                    return $subject;
-                } //$limit === 0
-            } //!is_array( $this_subject )
-        } //$subject as $key => $this_subject
-        return $subject;
-    } //is_array( $subject )
-    elseif ( is_array( $search ) ) {
-        // Only treat $replace as an array if $search is also an array (to match str_replace())
-        // Clear keys of $search (to match str_replace()).
-        $search = array_values( $search );
-        // Clear keys of $replace, if applicable (to match str_replace()).
-        if ( is_array( $replace ) ) {
-            $replace = array_values( $replace );
-        } //is_array( $replace )
-        // Loop through $search array.
-        foreach ( $search as $key => $this_search ) {
-            // Don't support multi-dimensional arrays (to match str_replace()).
-            $this_search = strval( $this_search );
-            // If $replace is an array, use the value of $replace[$key] as the replacement. If
-            // $replace[$key] doesn't exist, just an empty string (to match str_replace()).
-            if ( is_array( $replace ) ) {
-                if ( array_key_exists( $key, $replace ) ) {
-                    $this_replace = strval( $replace[ $key ] );
-                } //array_key_exists( $key, $replace )
-                else {
-                    $this_replace = '';
-                }
-            } //is_array( $replace )
-            else {
-                $this_replace = strval( $replace );
-            }
-            // Call this function again for
-            $this_function = __FUNCTION__;
-            $subject       = $this_function( $this_search, $this_replace, $subject, $this_count, $limit );
-            // Adjust $count
-            $count += $this_count;
-            // Adjust $limit, if not -1
-            if ( $limit != -1 ) {
-                $limit -= $this_count;
-            } //$limit != -1
-            // Reached $limit, return $subject
-            if ( $limit === 0 ) {
-                return $subject;
-            } //$limit === 0
-        } //$search as $key => $this_search
-        return $subject;
-    } //is_array( $search )
-    else {
-        $search  = strval( $search );
-        $replace = strval( $replace );
-        // Get position of first $search
-        $pos     = strpos( $subject, $search );
-        // Return $subject if $search cannot be found
-        if ( $pos === false ) {
-            return $subject;
-        } //$pos === false
-        // Get length of $search, to make proper replacement later on
-        $search_len = strlen( $search );
-        // Loop until $search can no longer be found, or $limit is reached
-        for ( $i = 0; ( ( $i < $limit ) || ( $limit === -1 ) ); $i++ ) {
-            // Replace 
-            $subject = substr_replace( $subject, $replace, $pos, $search_len );
-            // Increase $count
-            $count++;
-            // Get location of next $search
-            $pos = strpos( $subject, $search );
-            // Break out of loop if $needle
-            if ( $pos === false ) {
-                break;
-            } //$pos === false
-        } //$i = 0; ( ( $i < $limit ) || ( $limit === -1 ) ); $i++
-        // Return new $subject
-        return $subject;
-    }
-}
-
-function str_lreplace( $search, $replace, $subject )
-{
-    $pos = strrpos( $subject, $search );
-    if ( $pos !== false ) {
-        $subject = substr_replace( $subject, $replace, $pos, strlen( $search ) );
-    } //$pos !== false
-    return $subject;
-}
-
-
 
 ?>

@@ -1,10 +1,46 @@
 <?php
+
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | CrowdTranslator Plugin 0.1                                                |
+// +---------------------------------------------------------------------------+
+// | index.php                                                                 |
+// |                                                                           |
+// | Public plugin page                                                        |
+// +---------------------------------------------------------------------------+
+// | Copyright (C) 2013 by the following authors:                              |
+// |                                                                           |
+// | Authors: Benjamin Talic - b DOT ttalic AT gmail DOT com                   |
+// +---------------------------------------------------------------------------+
+// | Created with the Geeklog Plugin Toolkit.                                  |
+// +---------------------------------------------------------------------------+
+// |                                                                           |
+// | This program is free software; you can redistribute it and/or             |
+// | modify it under the terms of the GNU General Public License               |
+// | as published by the Free Software Foundation; either version 2            |
+// | of the License, or (at your option) any later version.                    |
+// |                                                                           |
+// | This program is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+// | GNU General Public License for more details.                              |
+// |                                                                           |
+// | You should have received a copy of the GNU General Public License         |
+// | along with this program; if not, write to the Free Software Foundation,   |
+// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+/**
+ * @package CrowdTranslator
+ */
+
 /*
  * Script will take extracted array data find the original array values from the database
  * where all variables and html tags have been replaced with <tag> and create the 
  * HTML of the translation form
  * before it is saved to the database
  */
+
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
 require_once '../../../crowdtranslator/lib-translator.php';
@@ -73,8 +109,10 @@ $display .= COM_endBlock();
 $display .= COM_siteFooter();
 echo $display;
 
-
-
+/**
+* Get the list of sites allowed to submit translations
+* @return string HTML code for the list
+*/
 function get_peer_list( )
 {
     global $_TABLES;
@@ -97,6 +135,11 @@ function get_peer_list( )
     return $return;
 }
 
+
+/**
+* Generates the form for submiting translations to a remote web page
+* @return string HTML code for the form
+*/
 function credentials_form( )
 {
     global $_TABLES, $language, $site_url, $site_name, $site_credentials;
@@ -171,6 +214,10 @@ function add_remote_form_element( &$form, $count, $value, $base_url, $disabled_u
     $form .= $template;
 }
 
+/**
+* Generates an array of objects holding translations and their metadata
+* @return array Objects holding translations and their metadata
+*/
 function get_remote_language_array( )
 {
     global $_TABLES, $language;
