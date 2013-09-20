@@ -50,7 +50,6 @@ global $_CROWDTRANSLATOR_DEFAULT;
 $_CROWDTRANSLATOR_DEFAULT = array( );
 
 $_CROWDTRANSLATOR_DEFAULT[ 'enabled' ]      = true;
-$_CROWDTRANSLATOR_DEFAULT[ 'block_enable' ] = true;
 $_CROWDTRANSLATOR_DEFAULT[ 'full_install' ] = false;
 /**
  * Initialize crowdtranslator plugin configuration
@@ -74,7 +73,6 @@ function plugin_initconfig_crowdtranslator( )
         $c->add( 'fs_main', NULL, 'fieldset', 0, 0, NULL, 0, true, $me, 0 );
         // The below two lines add two settings to Geeklog's config UI
         $c->add( 'enabled', $_CROWDTRANSLATOR_DEFAULT[ 'enabled' ], 'select', 0, 0, 0, 10, true, $me, 0 ); // This adds a drop-down box
-        $c->add( 'block_enable', $_CROWDTRANSLATOR_DEFAULT[ 'block_enable' ], 'select', 0, 0, 0, 10, true, $me, 0 );
     }
     return true;
 }

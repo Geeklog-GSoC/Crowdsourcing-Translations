@@ -1,0 +1,98 @@
+CrowdTranslator History/Changes:
+
+
+Tue, 17 Sep 2013 15:32:57 +0200
+btalic
+   Added comments to php files. Added custom string replace script default tip  
+
+Mon, 16 Sep 2013 23:20:37 +0200 
+btalic
+   Added the remote send and recieve code. Added interface for providing credentials to remote submitors, fixed bug for large urls in the language_map table, updated the interface provided for the user profile, updated admin/index.php. 
+
+Fri, 13 Sep 2013 16:29:17 +0200  
+btalic
+   changed installation process 
+
+Tue, 03 Sep 2013 20:05:38 +0200
+ btalic
+    Added missing code from submit_translation.php, updated string_extract.js and lib-translator.php to accomodate the new functionality. Updated the install process, and implemented the translation packing process - packing.php 
+
+Mon, 26 Aug 2013 14:34:26 +0200
+ btalic
+    Fixed the highligh to work with the new approach. Updated originals saving and retrieval along with translation submision. updated the purge of the LANG references. moved gam awards to lib-translator. formatted the code  
+
+Mon, 19 Aug 2013 15:21:03 +0200
+ btalic
+    Switched to mapping approach. Esentialy it works although there are some errors with highlighting. Submision and Gamification work fine. 
+
+Wed, 31 Jul 2013 03:33:20 +0200 
+ btalic
+    Debuged with E_ALL and fixed the kinks. Now it works except for the Undefined index: blockorder which I have no idea where to begin fixing 
+
+Tue, 30 Jul 2013 22:15:58 +0200
+ btalic
+    Added $_POST validation to the public files.Should fix the issue we experienced  
+
+Tue, 30 Jul 2013 14:33:49 +0200
+ btalic
+    Fixed all the issues I could find. Added votes gamification. This version works on a real server (as opposed to localhost) 
+
+Sat, 27 Jul 2013 01:35:15 +0200
+ btalic
+    First version of gamification. First 2 awards. JS interface for notification. checking if award recieved and awarding function. Integration with the user profile  
+
+Thu, 25 Jul 2013 22:59:33 +0200
+ btalic
+    Fixed require_once in get_languages.php and cookie retrieval in JS.  
+
+Wed, 24 Jul 2013 22:44:27 +0200
+ btalic
+    JS base_url function fixed, it does not need public_html in the window.location string to work. Now it uses the scripts src property 
+
+Wed, 24 Jul 2013 21:13:50 +0200
+ btalic
+    Division by 0 error fixed in get_translation_percent.php 
+
+Wed, 24 Jul 2013 20:06:51 +0200
+ Dirk Haun
+   fixed undefined variables  
+
+Wed, 24 Jul 2013 20:04:56 +0200
+ Dirk Haun
+   fixed spelling of $LANG_CROWDTRANSLATOR_1 (all uppercase)  
+
+Wed, 24 Jul 2013 20:04:10 +0200
+ Dirk Haun
+   fixed undefined variables and indexes  
+
+Wed, 24 Jul 2013 00:37:24 +0200
+ btalic
+    Fixed the path issue and instal/uninst 
+
+Tue, 23 Jul 2013 15:07:36 +0200
+ btalic
+    Added the plugin admin page. Included functionality in the lib-translator. Added to style.css, updated the JS file with new functions. Updated existing lib-translator functions to work with the new use cases  
+
+Wed, 17 Jul 2013 22:49:51 +0200
+  btalic
+     I have figured out the problem with $_TABLES so the code where table names where hardcoded is changed. Added the public page of the plugin. Updated JS and CSS files with functions and styles needed by the new page. Added lib-translator.php which should host all functions needed by the plugin. Added removing translations functionality  
+
+Sat, 13 Jul 2013 16:48:58 +0200
+  btalic
+     Added vote functionality. Translations can now be submited. Changed location of several files. Currently several files are used in the public_html. This is for development only, the files will be merged later on. JS file has been updated and refactored 
+
+Fri, 05 Jul 2013 13:29:23 +0200 
+  btalic
+     Added buttons for highlighting strings, this way the highlight is not lost if the user has to scroll the page. Removing highlights is also done via button. Added scroll option to form, so it is more compact on the screen. Added vote up and down buttons. Fixed the plugin looks and feels a bit. Fixed a fex bugs I have found all around the plugin. Added usage guidelines to the plugin. The selected language is now saved in a cookie so the user has to select the language only once per session.  
+
+Sat, 29 Jun 2013 02:19:54 +0200
+  btalic
+     Changed the autoinstall-added new table, changed sql files for creating new table. The new table will hold all the array elements from the language files where the strings are striped from all HTML and PHP tags/variables. Changed the JS file to access new php scripts and display such striped strings to the user for translation 
+
+Wed, 26 Jun 2013 21:02:42 +0200
+  btalic
+     Fixed the language_markup.php found a few bugs when marking strings.Adjusted javascript for a bit better performance.Fixed bug with the ajax call. 
+
+Tue, 25 Jun 2013 22:49:35 +0200
+  btalic
+     First commit.The code generated in the first week of GSoC.This includes v1 of the sql files, the language_markup function.CSS sheet and JS file.
