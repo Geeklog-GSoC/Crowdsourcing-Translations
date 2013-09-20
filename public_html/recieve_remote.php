@@ -160,10 +160,10 @@ function save_to_database( $process_q )
     //saving translation to database
     foreach ( $process_q as $key => $input ) {
         $query  = "INSERT INTO {$_TABLES['translations']}(`id`, `language_full_name`, `language_file`, `plugin_name`, `site_credentials`, `user_id`,
-			`timestamp`, `approval_counts`, `language_array`, `array_key`, `array_subindex`, `translation`)
+            `timestamp`, `approval_counts`, `language_array`, `array_key`, `array_subindex`, `translation`)
 VALUES ('', '{$input->language_full_name}' , 
-	'{$input->language_file}', '{$input->plugin_name}', '{$input->site_credentials}', '{$input->user_id}', '{$date}', '{$input->approval_counts}',
-	'{$input->language_array}','{$input->array_key}','{$input->array_subindex}','{$input->translation}')";
+    '{$input->language_file}', '{$input->plugin_name}', '{$input->site_credentials}', '{$input->user_id}', '{$date}', '{$input->approval_counts}',
+    '{$input->language_array}','{$input->array_key}','{$input->array_subindex}','{$input->translation}')";
         $result = DB_query( $query );
         //after the translation is saved the first vote is added to it (assuming the user who submited the vote would vote it up)
         if ( $result == true ) {

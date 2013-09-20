@@ -63,10 +63,10 @@ if ( $function == 'get_user_translations_table' ) {
 elseif ( $function == 'get_translations_table' ) {
     echo get_translations_table();
 } //$function == 'get_translations_table'
-    elseif ( $function == 'delete_translation' ) {
+elseif ( $function == 'delete_translation' ) {
     echo delete_translation();
 } //$function == 'delete_translation'
-    elseif ( $function == 'get_user_badges' ) {
+elseif ( $function == 'get_user_badges' ) {
     echo get_user_badges();
 } //$function == 'get_user_badges'
 else if ( $function == 'block_user' ) {
@@ -226,7 +226,7 @@ function get_user_badges( $limit = -1, $admin = 0, $show_not_awarded = true )
         if ( $limit > 0 ) {
             $query = "SELECT g.title, g.tooltip, g.image FROM {$_TABLES['gems']} g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM {$_TABLES['awarded_gems']} a WHERE a.user_id= {$_USER['uid']} ) LIMIT {$limit}";
         } //$limit > 0
-        elseif ( $limit < 0 ) {
+        elseif ( $limit <= 0 ) {
             $query = "SELECT g.title, g.tooltip, g.image FROM {$_TABLES['gems']} g WHERE g.gem_id NOT IN (SELECT a.gem_id FROM {$_TABLES['awarded_gems']} a WHERE a.user_id= {$_USER['uid']} )";
         } //$limit < 0
         $result = DB_query( $query );
@@ -430,8 +430,8 @@ function get_translations_table_headers( $admin, $limit )
         <th> <a href='javascript:void(0)' onclick='show_more_translations({$limit}, -1, {$admin}, \"`posted` DESC\")'> Posted </a> 
             <a href='javascript:void(0)' onclick='show_more_translations({$limit}, -1, {$admin}, \"`posted` ASC\")'> (ASC) </a></th> 
             <th> </th> </tr> ";
-    return $display;
-}
+            return $display;
+        }
 
 /**
  * Assembles last row of the translations table ncludes the click for Previous show, Next show and input box for limit
@@ -715,13 +715,13 @@ function awards( )
             if ( award_first_vote( $gem_id ) == true )
                 $counter++;
         } //$gem_id == 3 && $awarded == false
-            elseif ( $gem_id == 4 ) {
+        elseif ( $gem_id == 4 ) {
             while ( award_nth_vote( $gem_id ) == true ) {
                 $counter++;
             } //award_nth_vote( $gem_id ) == true
             continue;
         } //$gem_id == 4
-            elseif ( $gem_id == 1 && $awarded == false ) {
+        elseif ( $gem_id == 1 && $awarded == false ) {
             give_award( $gem_id );
             $counter++;
         } //$gem_id == 1 && $awarded == false
@@ -861,18 +861,18 @@ function add_peer( )
             $query = "INSERT INTO {$_TABLES['remote_credentials']} VALUES ('{$_POST['site_name']}', '{$password}', '{$salt}')";
             DB_query( $query );
             $response = array(
-                 "site_name" => $_POST[ 'site_name' ] 
-            );
+               "site_name" => $_POST[ 'site_name' ] 
+               );
         } else {
             $response = array(
-                 "error" => "Peer with this name already exists" 
-            );
+               "error" => "Peer with this name already exists" 
+               );
         }
         
     } else {
         $response = array(
-             "error" => "Site name or Site credentials are not set" 
-        );
+           "error" => "Site name or Site credentials are not set" 
+           );
     }
     
     return json_encode( $response );
@@ -892,12 +892,12 @@ function remove_peer( )
         $query = "DELETE t.* FROM {$_TABLES['translations']} as t WHERE t.site_credentials = '{$_POST['peer_name']}'";
         DB_query( $query );
         $response = array(
-             "site_name" => $_POST[ 'peer_name' ] 
-        );
+           "site_name" => $_POST[ 'peer_name' ] 
+           );
     } else {
         $response = array(
-             "error" => "Site name are not set" 
-        );
+           "error" => "Site name are not set" 
+           );
     }
     return json_encode( $response );
 }
@@ -1015,7 +1015,7 @@ function get_original_language_values( )
                 if ( $sign == '1' ) {
                     $disabled_up = 'disabled';
                 } else
-                    $disabled_down = 'disabled';
+                $disabled_down = 'disabled';
             }
         }
         //assembles the next input element
@@ -1200,9 +1200,9 @@ function get_language_array( )
     $language_array = array( );
     if ( !is_array( $reference ) || empty( $reference ) ) {
         echo json_encode( array(
-             "error" => "This page is not mapped",
-            "error_code" => 2 
-        ) );
+           "error" => "This page is not mapped",
+           "error_code" => 2 
+           ) );
         exit;
     }
     foreach ( $reference as $key => $value ) {
@@ -1308,6 +1308,16 @@ function submit_translation( )
     $process_q     = array( );
     $count         = $_POST[ 'count' ];
     $language      = $_COOKIE[ 'selected_language' ];
+    if ($language == '' || $language == null) {
+        $response[ 'bad_input' ]  = 0;
+        $response[ 'translated' ] = get_translation_percent();
+        $response[ 'good_input' ] = 0;
+
+        $response[ 'awards_number' ] = 0;
+        $response[ 'error' ] = 'Language not set';
+        echo json_encode( $response );
+        exit;
+    }
     //loop through all the input fields
     for ( $i = 0; $i < $count; $i++ ) {
         $base_name     = "translator_input_{$i}";
@@ -1390,17 +1400,17 @@ function save_to_database( $process_q )
         $query  = "INSERT INTO {$_TABLES['translations']}(`id`, `language_full_name`, `language_file`, `plugin_name`, `site_credentials`, `user_id`,
             `timestamp`, `approval_counts`, `language_array`, `array_key`, `array_subindex`, `translation`)
 VALUES ('', '{$input->language_full_name}' , 
-   '{$input->language_file}', '{$input->plugin_name}', '{$input->site_credentials}', '{$input->user_id}', '{$date}', '{$input->approval_counts}',
-   '{$input->language_array}','{$input->array_key}','{$input->array_subindex}','{$input->translation}')";
-        $result = DB_query( $query );
+ '{$input->language_file}', '{$input->plugin_name}', '{$input->site_credentials}', '{$input->user_id}', '{$date}', '{$input->approval_counts}',
+ '{$input->language_array}','{$input->array_key}','{$input->array_subindex}','{$input->translation}')";
+$result = DB_query( $query );
         //after the translation is saved the first vote is added to it (assuming the user who submited the vote would vote it up)
-        if ( $result == true ) {
-            $query          = "SELECT MAX(`id`) as translation_id FROM {$_TABLES['translations']} ";
-            $result         = DB_query( $query );
-            $translation_id = DB_fetchArray( $result );
-            $translation_id = $translation_id[ 'translation_id' ];
-            $query          = "INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$input->user_id}', '1') ";
-            DB_query( $query );
+if ( $result == true ) {
+    $query          = "SELECT MAX(`id`) as translation_id FROM {$_TABLES['translations']} ";
+    $result         = DB_query( $query );
+    $translation_id = DB_fetchArray( $result );
+    $translation_id = $translation_id[ 'translation_id' ];
+    $query          = "INSERT INTO {$_TABLES['votes']} (`translation_id`, `user_id`, `sign`) VALUES ('{$translation_id}', '{$input->user_id}', '1') ";
+    DB_query( $query );
         } //$result == true
     } //$process_q as $key => $input
 }
